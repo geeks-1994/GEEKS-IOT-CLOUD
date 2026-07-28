@@ -1,0 +1,486 @@
+<div class="dashboard-container">
+
+  <div class="dashboard-header">
+    <div>
+      <h4 class="dashboard-title">Dashboard</h4>
+      <p class="dashboard-subtitle">
+        Visualización general de indicadores y operaciones.
+      </p>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs dashboard-tabs">
+    <li class="nav-item">
+      <button
+        type="button"
+        class="nav-link"
+        [class.active]="activeTab() === 'general'"
+        (click)="changeTab('general')"
+      >
+        General
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button
+        type="button"
+        class="nav-link"
+        [class.active]="activeTab() === 'fuel'"
+        (click)="changeTab('fuel')"
+      >
+        Tanques
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button
+        type="button"
+        class="nav-link"
+        [class.active]="activeTab() === 'fleet'"
+        (click)="changeTab('fleet')"
+      >
+        Flota
+      </button>
+    </li>
+
+    <li class="nav-item">
+      <button
+        type="button"
+        class="nav-link"
+        [class.active]="activeTab() === 'alerts'"
+        (click)="changeTab('alerts')"
+      >
+        Alertas
+      </button>
+    </li>
+  </ul>
+
+  <div class="dashboard-tab-content">
+
+    @switch (activeTab()) {
+
+      @case ('general') {
+        <div class="general-dashboard">
+
+  <!-- RESUMEN -->
+  <section class="dashboard-section">
+
+    <div class="section-header">
+      <div>
+        <h5 class="section-title">Resumen general</h5>
+        <p class="section-description">
+          Indicadores principales de la operación.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-3">
+
+      <!-- TRANSACCIONES -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="summary-card summary-card-primary">
+
+          <div class="summary-icon">
+            <i class="bi bi-receipt"></i>
+          </div>
+
+          <div class="summary-content">
+            <span class="summary-label">
+              Transacciones
+            </span>
+
+            <strong class="summary-value">
+              {{ numberRegister() }}
+            </strong>
+
+            <span class="summary-helper">
+              Registros procesados
+            </span>
+          </div>
+
+          <div class="summary-decoration"></div>
+
+        </div>
+      </div>
+
+      <!-- TOTAL DESPACHADO -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="summary-card summary-card-success">
+
+          <div class="summary-icon">
+            <i class="bi bi-fuel-pump"></i>
+          </div>
+
+          <div class="summary-content">
+            <span class="summary-label">
+              Total despachado
+            </span>
+
+            <strong class="summary-value">
+              {{ TotalGalon() }}
+              <small>gls</small>
+            </strong>
+
+            <span class="summary-helper">
+              Volumen acumulado
+            </span>
+          </div>
+
+          <div class="summary-decoration"></div>
+
+        </div>
+      </div>
+
+      <!-- ALERTAS -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="summary-card summary-card-warning">
+
+          <div class="summary-icon">
+            <i class="bi bi-exclamation-triangle"></i>
+          </div>
+
+          <div class="summary-content">
+            <span class="summary-label">
+              Alertas
+            </span>
+
+            <strong class="summary-value">
+              {{ NumberAuditlog() }}
+            </strong>
+
+            <span class="summary-helper">
+              Eventos detectados
+            </span>
+          </div>
+
+          <div class="summary-decoration"></div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- GRÁFICOS -->
+  <section class="dashboard-section">
+
+    <div class="section-header">
+      <div>
+        <h5 class="section-title">Distribución de datos</h5>
+        <p class="section-description">
+          Análisis visual de los despachos registrados.
+        </p>
+      </div>
+    </div>
+
+    <div class="row g-3">
+
+      <!-- PRIMER GRÁFICO -->
+      <div class="col-12 col-xl-6">
+        <div class="chart-card">
+
+          <div class="chart-card-header">
+            <div>
+              <h6 class="chart-card-title">
+                Distribución de despachos
+              </h6>
+
+              <p class="chart-card-description">
+                Participación según la categoría seleccionada.
+              </p>
+            </div>
+
+            <div class="chart-card-icon chart-card-icon-primary">
+              <i class="bi bi-pie-chart"></i>
+            </div>
+          </div>
+
+          <div class="chart-card-body">
+            <app-dynamic-chart
+              [config]="Piechartconfig()">
+            </app-dynamic-chart>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SEGUNDO GRÁFICO -->
+      <div class="col-12 col-xl-6">
+        <div class="chart-card">
+
+          <div class="chart-card-header">
+            <div>
+              <h6 class="chart-card-title">
+                Distribución por producto
+              </h6>
+
+              <p class="chart-card-description">
+                Comparativa del volumen despachado por producto.
+              </p>
+            </div>
+
+            <div class="chart-card-icon chart-card-icon-success">
+              <i class="bi bi-droplet-half"></i>
+            </div>
+          </div>
+
+          <div class="chart-card-body">
+            <app-dynamic-chart
+              [config]="PieProductchartConfig()">
+            </app-dynamic-chart>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
+
+      }
+
+
+
+
+      
+      @case ('fuel') {
+<section class="tank-section">
+
+  <div class="tank-section-header">
+    <div>
+      <h5 class="tank-section-title">
+        Tanques de combustible
+      </h5>
+
+      <p class="tank-section-description">
+        Estado actual y nivel disponible del inventario.
+      </p>
+    </div>
+
+    <div class="tank-section-icon">
+      <i class="bi bi-fuel-pump"></i>
+    </div>
+  </div>
+
+  @if (tankGauges().length > 0) {
+
+    <div class="row g-3">
+
+      @for (item of tankGauges(); track item.tankId ?? $index) {
+
+        <div class="col-12 col-xxl-6">
+
+          <article class="tank-card">
+
+            <!-- ENCABEZADO -->
+            <div class="tank-card-header">
+
+              <div class="tank-heading">
+                <span class="tank-card-label">
+                  ID tanque:
+                  {{ item.tankId || 'Sin identificación' }}
+                </span>
+
+                <h6 class="tank-card-title">
+                  {{ item.title || 'Tanque de combustible' }}
+                </h6>
+              </div>
+
+              <div
+                class="tank-status"
+                [class.tank-status-inactive]="item.active === false"
+              >
+                <span class="tank-status-dot"></span>
+
+                {{ item.active === false ? 'Inactivo' : 'Activo' }}
+              </div>
+
+            </div>
+
+            <!-- CONTENIDO -->
+            <div class="tank-card-content">
+
+              <!-- PANEL DEL GAUGE -->
+              <div class="tank-chart-panel">
+
+                <!-- <div class="tank-chart-header">
+                  <div>
+                    <span class="tank-chart-label">
+                      Nivel disponible
+                    </span>
+
+                    <strong class="tank-chart-percentage">
+                      {{ item.percentage ?? 0 }}%
+                    </strong>
+                  </div>
+
+                  <div class="tank-chart-badge">
+                    <i class="bi bi-speedometer2"></i>
+                  </div>
+                </div> -->
+
+                <div class="tank-chart-wrapper">
+                  <app-gauge-chart
+                    [config]="item.GaugeChart">
+                  </app-gauge-chart>
+                </div>
+
+                <div class="tank-chart-footer">
+
+                  <div class="tank-chart-footer-item">
+                    <span>Volumen actual</span>
+
+                    <strong>
+                      {{ item.volume || 0 }}
+                      <small>gal</small>
+                    </strong>
+                  </div>
+
+                  <div class="tank-chart-divider"></div>
+
+                  <div class="tank-chart-footer-item text-end">
+                    <span>Capacidad total</span>
+
+                    <strong>
+                      {{ item.capacity || 0 }}
+                      <small>gal</small>
+                    </strong>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- PANEL DE INFORMACIÓN -->
+              <div class="tank-info-panel">
+
+                <div class="tank-info-title">
+                  <i class="bi bi-info-circle"></i>
+                  Información del tanque
+                </div>
+
+                <div class="tank-info-grid">
+
+                  <div class="tank-info-item">
+
+                    <div class="tank-info-icon product">
+                      <i class="bi bi-droplet-half"></i>
+                    </div>
+
+                    <div class="tank-info-content">
+                      <span>Tipo de producto</span>
+
+                      <strong
+                        [title]="item.product || 'Sin producto'"
+                      >
+                        {{ item.product || 'Sin producto' }}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  <div class="tank-info-item">
+
+                    <div class="tank-info-icon volume">
+                      <i class="bi bi-fuel-pump"></i>
+                    </div>
+
+                    <div class="tank-info-content">
+                      <span>Volumen actual</span>
+
+                      <strong>
+                        {{ item.volume || 0 }} gal
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  <div class="tank-info-item">
+
+                    <div class="tank-info-icon capacity">
+                      <i class="bi bi-box"></i>
+                    </div>
+
+                    <div class="tank-info-content">
+                      <span>Capacidad</span>
+
+                      <strong>
+                        {{ item.capacity || 0 }} gal
+                      </strong>
+                    </div>
+
+                  </div>
+
+                  <!-- <div class="tank-info-item">
+
+                    <div class="tank-info-icon percentage">
+                      <i class="bi bi-percent"></i>
+                    </div>
+
+                    <div class="tank-info-content">
+                      <span>Porcentaje disponible</span>
+
+                      <strong>
+                        {{ item.percentage ?? 0 }}%
+                      </strong>
+                    </div>
+
+                  </div> -->
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      }
+
+    </div>
+
+  } @else {
+
+    <div class="tank-empty-state">
+
+      <div class="tank-empty-icon">
+        <i class="bi bi-fuel-pump"></i>
+      </div>
+
+      <h6>No hay tanques disponibles</h6>
+
+      <p>
+        No se encontraron datos de inventario para mostrar.
+      </p>
+
+    </div>
+
+  }
+
+</section>
+
+      }
+
+      @case ('fleet') {
+        <div class="content-card">
+          <h5>Estado de la flota</h5>
+          <p>Aquí puedes mostrar vehículos activos, detenidos o en mantenimiento.</p>
+        </div>
+      }
+
+      @case ('alerts') {
+        <div class="content-card">
+          <h5>Alertas recientes</h5>
+          <p>Aquí puedes mostrar eventos críticos y notificaciones.</p>
+        </div>
+      }
+
+    }
+
+  </div>
+</div>

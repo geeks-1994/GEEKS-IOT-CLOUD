@@ -1,0 +1,218 @@
+<div class="reports-viewer container-fluid">
+
+  <!-- TOOLBAR CARD -->
+  <div class="report-toolbar-card shadow-sm">
+
+    <!-- Header -->
+    <div class="report-toolbar-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <span class="report-eyebrow">Centro de reportes</span>
+
+        <h5 class="report-title mb-1">
+          Reporte: {{ titlereport() }}
+        </h5>
+
+        <p class="report-subtitle mb-0">
+          Configure los filtros para generar el reporte.
+        </p>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="report-toolbar-body">
+
+      <div class="row g-3 align-items-end">
+
+        @for (parameter of toolbarComponents(); track parameter.name) {
+
+          <div [class]="parameter.colClass || 'col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2'">
+
+            @switch (parameter.type) {
+
+              @case ('date') {
+                <mat-form-field appearance="outline" class="toolbar-field w-100">
+                  <mat-label>{{ parameter.label || parameter.name }}</mat-label>
+
+                  <input
+                    matInput
+                    [matDatepicker]="picker"
+                    [value]="parameter.value"
+                    [disabled]="parameter.readonly"
+                    (dateChange)="updateParameterValue(parameter.name, $event.value)"
+                  />
+
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              }
+
+              @case ('time') {
+                <mat-form-field appearance="outline" class="toolbar-field w-100">
+                  <mat-label>{{ parameter.label || parameter.name }}</mat-label>
+
+                  <input
+                    matInput
+                    type="time"
+                    [value]="parameter.value"
+                    [disabled]="parameter.readonly"
+                    (input)="updateParameterValue(parameter.name, $any($event.target).value)"
+                  />
+                </mat-form-field>
+              }
+
+              @case ('select') {
+                <mat-form-field appearance="outline" class="toolbar-field w-100">
+                  <mat-label>{{ parameter.label || parameter.name }}</mat-label>
+
+                  <mat-select
+                    [value]="parameter.value"
+                    [disabled]="parameter.readonly"
+                    (selectionChange)="updateParameterValue(parameter.name, $event.value)"
+                  >
+                    @for (option of parameter.options || []; track option.value) {
+                      <mat-option [value]="option.value">
+                        {{ option.label }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              }
+
+              @case ('select-search') {
+                <mat-form-field appearance="outline" class="toolbar-field w-100">
+                  <mat-label>{{ parameter.label || parameter.name }}</mat-label>
+
+                  <input
+                    matInput
+                    type="text"
+                    [value]="getOptionLabel(parameter)"
+                    [disabled]="parameter.readonly"
+                    [matAutocomplete]="auto"
+                    (input)="updateParameterValue(parameter.name, $any($event.target).value)"
+                  />
+
+                  <mat-autocomplete
+                    #auto="matAutocomplete"
+                    (optionSelected)="updateParameterValue(parameter.name, $event.option.value)"
+                  >
+                    @for (option of getFilteredOptions(parameter); track option.value) {
+                      <mat-option [value]="option.value">
+                        {{ option.label }}
+                      </mat-option>
+                    }
+                  </mat-autocomplete>
+                </mat-form-field>
+              }
+
+              @case ('checkbox') {
+                <div class="toolbar-check-wrapper d-flex align-items-center h-100">
+                  <mat-checkbox
+                    [checked]="parameter.value"
+                    [disabled]="parameter.readonly"
+                    (change)="updateParameterValue(parameter.name, $event.checked)"
+                  >
+                    {{ parameter.label || parameter.name }}
+                  </mat-checkbox>
+                </div>
+              }
+
+            }
+
+          </div>
+
+        }
+
+        <!-- Actions -->
+        <div class="col-12 col-lg-auto ms-lg-auto">
+          <div class="toolbar-actions d-flex flex-column flex-sm-row gap-2 justify-content-end align-items-stretch align-items-sm-center">
+
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              class="toolbar-btn-primary w-100 w-md-auto"
+              (click)="runReport()"
+            >
+              <span>Generar</span>
+              <i class="bi bi-file-earmark-medical ms-2"></i>
+            </button>
+
+            <button
+              mat-stroked-button
+              type="button"
+              class="toolbar-btn-secondary w-100 w-sm-auto"
+              (click)="clearToolbar()"
+            >
+              Limpiar
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- CHART CARD -->
+  @if (selectedReport()?.enableChart) {
+    <div class="report-chart-card shadow-sm mt-4">
+
+      <div class="report-chart-header">
+        <div>
+          <span class="chart-eyebrow">Análisis visual</span>
+
+          <h6 class="report-chart-title mb-1">
+            Gráfico del reporte
+          </h6>
+
+          <p class="report-chart-subtitle mb-0">
+            Visualización generada a partir de los datos del reporte.
+          </p>
+        </div>
+
+        <div class="chart-icon">
+          <i class="bi bi-bar-chart-line"></i>
+        </div>
+      </div>
+
+      <div class="report-chart-body">
+        <app-dynamic-chart
+          [config]="chartconfig()">
+        </app-dynamic-chart>
+      </div>
+
+    </div>
+  }
+
+  <!-- TABLE CARD -->
+  <div class="report-table-card shadow-sm mt-4">
+
+    <div class="report-table-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+      <div>
+        <span class="table-eyebrow">Detalle de datos</span>
+
+        <h6 class="report-table-title mb-1">
+          Resultado del reporte
+        </h6>
+
+        <p class="report-table-subtitle mb-0">
+          Los datos generados se mostrarán en la tabla inferior.
+        </p>
+      </div>
+
+      <div class="table-toolbar d-flex flex-column flex-sm-row gap-2">
+        <!-- Botones futuros -->
+      </div>
+
+    </div>
+
+    <div class="report-table-body">
+      <div #tabulatorTable class="tabulator-container"></div>
+    </div>
+
+  </div>
+
+</div>

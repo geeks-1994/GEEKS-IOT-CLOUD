@@ -1,0 +1,23 @@
+<div class="chart-container">
+
+  <apx-chart
+    [series]="chartConfig().series"
+    [chart]="chartConfig().chart"
+    [labels]="chartConfig().labels ?? []"
+    [colors]="chartConfig().colors ?? []"
+    [title]="chartConfig().title ?? {}"
+    [subtitle]="chartConfig().subtitle ?? {}"
+    [xaxis]="chartConfig().xaxis ?? {}"
+    [yaxis]="chartConfig().yaxis ?? {}"
+    [stroke]="chartConfig().stroke ?? {}"
+    [fill]="chartConfig().fill ?? {}"
+    [grid]="chartConfig().grid ?? {}"
+    [legend]="chartConfig().legend ?? {}"
+    [tooltip]="chartConfig().tooltip ?? {}"
+    [dataLabels]="chartConfig().dataLabels ?? {}"
+    [markers]="chartConfig().markers ?? {}"
+    [plotOptions]="chartConfig().plotOptions ?? {}"
+    [responsive]="chartConfig().responsive ?? []">
+  </apx-chart>
+
+</div>

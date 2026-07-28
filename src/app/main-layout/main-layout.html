@@ -1,0 +1,148 @@
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.sidebar-collapsed]="sidebarCollapsed">
+
+    <div class="sidebar-logo">
+      <span class="logo-text" *ngIf="!sidebarCollapsed">
+        geeks-iot-Cloud
+      </span>
+
+      <span class="logo-icon" *ngIf="sidebarCollapsed">
+        g
+      </span>
+    </div>
+
+    <nav class="sidebar-menu">
+
+      <div
+        class="sidebar-group"
+        *ngFor="let menu of mainMenu; trackBy: trackByMenuName">
+
+        <!-- Menú directo -->
+        <a
+          *ngIf="menu.route && (!menu.submenu || menu.submenu.length === 0)"
+          [routerLink]="menu.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="sidebar-item"
+          [title]="menu.name">
+
+          <i [class]="menu.icon"></i>
+
+          <span *ngIf="!sidebarCollapsed">
+            {{ menu.name }}
+          </span>
+
+        </a>
+
+        <!-- Menú con submenu -->
+        <div *ngIf="menu.submenu && menu.submenu.length > 0">
+
+          <button
+            type="button"
+            class="sidebar-item sidebar-button"
+            [class.active]="isMenuOpen(menu.name)"
+            (click)="toggleMenu(menu.name)"
+            [title]="menu.name">
+
+            <i [class]="menu.icon"></i>
+
+            <span *ngIf="!sidebarCollapsed">
+              {{ menu.name }}
+            </span>
+
+            <i
+              *ngIf="!sidebarCollapsed"
+              class="bi ms-auto"
+              [ngClass]="{
+                'bi-chevron-up': isMenuOpen(menu.name),
+                'bi-chevron-down': !isMenuOpen(menu.name)
+              }">
+            </i>
+
+          </button>
+
+          <div
+            class="sidebar-submenu"
+            *ngIf="!sidebarCollapsed && isMenuOpen(menu.name)">
+
+            <a
+              *ngFor="let item of menu.submenu; trackBy: trackBySubMenuDescription"
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="sidebar-subitem"
+              [title]="item.description">
+
+              {{ item.description }}
+
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+  </aside>
+
+  <!-- Main area -->
+  <section class="main-area" [class.main-area-expanded]="sidebarCollapsed">
+
+    <!-- Toolbar siempre presente -->
+    <header class="toolbar">
+
+      <button
+        type="button"
+        class="btn btn-light menu-button"
+        (click)="toggleSidebar()">
+
+        <i class="bi bi-list"></i>
+
+      </button>
+
+      <div class="search-box">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar..." />
+      </div>
+
+      <div class="toolbar-actions">
+
+        <button type="button" class="btn btn-light">
+          <i class="bi bi-bell"></i>
+        </button>
+
+        <button type="button" class="btn btn-light">
+          <i class="bi bi-gear"></i>
+        </button>
+
+        <div class="user-profile">
+
+          <div class="user-avatar">
+            LP
+          </div>
+
+          <div class="user-info">
+            <strong>Usuario</strong>
+            <small>{{ email() }}</small>
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+    <!-- Contenido dinámico -->
+    <main class="content-container">
+      <router-outlet></router-outlet>
+    </main>
+
+  </section>
+
+</div>

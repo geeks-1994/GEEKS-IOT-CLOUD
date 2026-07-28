@@ -1,0 +1,33 @@
+<div class="gauge-card">
+
+  @if (config().subtitle) {
+    <div class="gauge-header">
+      <span class="gauge-subtitle">
+        {{ config().subtitle }}
+      </span>
+    </div>
+  }
+
+  <div class="gauge-chart-container">
+    <apx-chart
+      [series]="chartOptions().series"
+      [chart]="chartOptions().chart"
+      [plotOptions]="chartOptions().plotOptions"
+      [fill]="chartOptions().fill"
+      [stroke]="chartOptions().stroke"
+      [labels]="chartOptions().labels"
+      [colors]="chartOptions().colors">
+    </apx-chart>
+  </div>
+
+  <div class="gauge-range">
+    <span>
+      {{ minValue() }}
+    </span>
+
+    <span>
+      {{ maxValue() }}
+    </span>
+  </div>
+
+</div>

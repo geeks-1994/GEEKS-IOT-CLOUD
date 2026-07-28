@@ -1,0 +1,75 @@
+<div class="container-fluid">
+
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h4 class="fw-bold mb-0">
+        Detalle de Flota
+      </h4>
+    </div>
+  </div>
+
+  <!-- Primera fila -->
+  <div class="row g-3 mb-3">
+
+    <!-- Gráfico superior -->
+    <div class="col-12 col-xl-6">
+      <div class="card shadow-sm h-100">
+
+        <div class="card-header">
+          <strong>Km / Km por Galón</strong>
+        </div>
+
+        <div class="card-body">
+
+          <!-- Aquí irá el gráfico -->
+          <div id="chartKmGal" style="height:320px;"></div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Audit Log -->
+    <div class="col-12 col-xl-6">
+      <div class="card shadow-sm h-100">
+
+        <div class="card-header">
+          <strong>Audit Log</strong>
+        </div>
+
+        <div class="card-body">
+
+          <!-- Tabulator -->
+          <div #auditTable></div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Segunda fila -->
+  <div class="row">
+
+    <div class="col-12">
+      <div class="card shadow-sm">
+
+        <div class="card-header">
+          <strong>Resumen General</strong>
+        </div>
+
+        <div class="card-body">
+
+          <!-- Segundo gráfico -->
+          <div id="chartResume" style="height:350px;"></div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

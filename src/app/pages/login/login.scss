@@ -1,0 +1,150 @@
+.login-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+  background:
+    linear-gradient(rgba(3, 18, 32, 0.85), rgba(3, 18, 32, 0.92)),
+    url('../../../assets/img/cloud.jpg');
+
+  background-size: cover;
+  background-position: center;
+}
+
+.login-card {
+  position: relative;
+  max-width: 1180px;
+  min-height: 620px;
+  border-radius: 24px;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0, 96, 160, 0.96),
+      rgba(0, 66, 116, 0.97),
+      rgba(0, 38, 74, 0.98)
+    );
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.brand-section {
+  min-height: 620px;
+  border-right: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.brand-title {
+  color: #ffffff;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: lowercase;
+  margin-bottom: 14px;
+}
+
+.brand-subtitle {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 15px;
+  margin-bottom: 32px;
+}
+
+.form-section {
+  min-height: 620px;
+}
+
+.login-form {
+  max-width: 330px;
+}
+
+.login-input {
+  height: 42px;
+  border-radius: 3px;
+  border: none;
+  font-size: 15px;
+}
+
+.login-input:focus {
+  box-shadow:
+    0 0 0 3px rgba(120, 190, 255, 0.28),
+    inset 0 0 0 1px rgba(0, 123, 210, 0.4);
+}
+
+.forgot-link {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  font-style: italic;
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  color: #ffffff;
+}
+
+.btn-login {
+  color: #ffffff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+}
+
+.btn-login:hover {
+  color: #b7dfff;
+}
+
+.btn-login span {
+  font-size: 36px;
+  line-height: 0;
+  font-weight: 300;
+}
+
+.login-footer {
+  position: absolute;
+  right: 28px;
+  bottom: 22px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.login-footer a,
+.login-footer span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .login-card {
+    min-height: auto;
+  }
+
+  .brand-section {
+    min-height: auto;
+    padding: 48px 24px 28px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .form-section {
+    min-height: auto;
+    padding: 36px 24px 80px;
+  }
+
+  .brand-title {
+    font-size: 34px;
+  }
+
+  .login-footer {
+    left: 0;
+    right: 0;
+    justify-content: center;
+  }
+}

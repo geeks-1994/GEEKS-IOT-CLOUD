@@ -1,0 +1,669 @@
+.reports-viewer {
+  background: #f4f7fb;
+  min-height: calc(100vh - 120px);
+  padding: 24px;
+}
+
+/* ==========================
+   CARDS GENERALES
+========================== */
+
+.report-toolbar-card,
+.report-chart-card,
+.report-table-card {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+/* ==========================
+   EYEBROW LABELS
+========================== */
+
+.report-eyebrow,
+.chart-eyebrow,
+.table-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.report-eyebrow {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.chart-eyebrow {
+  color: #0369a1;
+}
+
+.table-eyebrow {
+  color: #014b5e;
+}
+
+/* ==========================
+   TOOLBAR CARD
+========================== */
+
+.report-toolbar-card {
+  background: #ffffff;
+}
+
+/* ==========================
+   HEADER
+========================== */
+
+.report-toolbar-header {
+  background: linear-gradient(135deg, #053f87, #014b5e);
+  color: #ffffff;
+  padding: 24px 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.report-toolbar-header::before {
+  content: "";
+  position: absolute;
+  right: 60px;
+  top: -45px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.report-toolbar-header::after {
+  content: "";
+  position: absolute;
+  right: -55px;
+  bottom: -70px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.report-toolbar-header > div {
+  position: relative;
+  z-index: 2;
+}
+
+.report-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.report-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* ==========================
+   BODY
+========================== */
+
+.report-toolbar-body {
+  padding: 26px 28px 30px;
+  background: #ffffff;
+}
+
+/* ==========================
+   CAMPOS MATERIAL
+========================== */
+
+.toolbar-field {
+  width: 100%;
+}
+
+/* Alto y fondo del campo */
+.toolbar-field ::ng-deep .mat-mdc-form-field-flex {
+  min-height: 54px;
+  background: #f8fafc;
+  border-radius: 15px;
+}
+
+/* Borde normal */
+.toolbar-field ::ng-deep .mdc-notched-outline__leading,
+.toolbar-field ::ng-deep .mdc-notched-outline__notch,
+.toolbar-field ::ng-deep .mdc-notched-outline__trailing {
+  border-color: #d8e1ec !important;
+}
+
+/* Borde hover */
+.toolbar-field:hover ::ng-deep .mdc-notched-outline__leading,
+.toolbar-field:hover ::ng-deep .mdc-notched-outline__notch,
+.toolbar-field:hover ::ng-deep .mdc-notched-outline__trailing {
+  border-color: #053f87 !important;
+}
+
+/* Borde focus */
+.toolbar-field.mat-focused ::ng-deep .mdc-notched-outline__leading,
+.toolbar-field.mat-focused ::ng-deep .mdc-notched-outline__notch,
+.toolbar-field.mat-focused ::ng-deep .mdc-notched-outline__trailing {
+  border-color: #053f87 !important;
+  border-width: 1.5px !important;
+}
+
+/* Label */
+.toolbar-field ::ng-deep .mat-mdc-floating-label {
+  color: #64748b !important;
+  font-size: 0.9rem;
+}
+
+.toolbar-field.mat-focused ::ng-deep .mat-mdc-floating-label {
+  color: #053f87 !important;
+}
+
+/* Input */
+.toolbar-field ::ng-deep input {
+  color: #0f172a;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+/* Select */
+.toolbar-field ::ng-deep .mat-mdc-select-value {
+  color: #0f172a;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.toolbar-field ::ng-deep .mat-mdc-select-arrow {
+  color: #053f87;
+}
+
+/* Íconos */
+.toolbar-field ::ng-deep .mat-mdc-form-field-icon-suffix {
+  color: #053f87;
+}
+
+/* Quitar espacio inferior excesivo de Material */
+.toolbar-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+/* ==========================
+   AUTOCOMPLETE / SELECT PANEL
+========================== */
+
+::ng-deep .mat-mdc-autocomplete-panel,
+::ng-deep .mat-mdc-select-panel {
+  border-radius: 16px !important;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.16) !important;
+  padding: 6px 0 !important;
+  background: #ffffff !important;
+}
+
+::ng-deep .mat-mdc-option {
+  min-height: 44px !important;
+  font-size: 0.9rem !important;
+}
+
+::ng-deep .mat-mdc-option:hover {
+  background: #eef6ff !important;
+}
+
+::ng-deep .mat-mdc-option.mdc-list-item--selected {
+  background: #e8f2ff !important;
+}
+
+::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+  color: #1e293b !important;
+}
+
+/* ==========================
+   CHECKBOX
+========================== */
+
+.toolbar-check-wrapper {
+  min-height: 56px;
+  padding: 0 4px;
+}
+
+.toolbar-check-wrapper ::ng-deep .mdc-label {
+  font-size: 0.92rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+.toolbar-check-wrapper ::ng-deep .mdc-checkbox__background {
+  border-color: #94a3b8 !important;
+}
+
+.toolbar-check-wrapper ::ng-deep .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+  background-color: #053f87 !important;
+  border-color: #053f87 !important;
+}
+
+/* ==========================
+   BOTONES
+========================== */
+
+.toolbar-actions {
+  min-height: 56px;
+}
+
+.toolbar-btn-primary,
+.toolbar-btn-secondary {
+  min-width: 112px;
+  height: 44px;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px;
+  text-transform: none;
+}
+
+.toolbar-btn-primary {
+  background: linear-gradient(135deg, #053f87, #014b5e) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 22px rgba(5, 63, 135, 0.25);
+}
+
+.toolbar-btn-primary:hover {
+  box-shadow: 0 14px 28px rgba(5, 63, 135, 0.32);
+  transform: translateY(-1px);
+}
+
+.toolbar-btn-secondary {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+.toolbar-btn-secondary:hover {
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+}
+
+.toolbar-btn-primary,
+.toolbar-btn-secondary {
+  transition: all 0.2s ease;
+}
+
+/* ==========================
+   CHART CARD
+========================== */
+
+.report-chart-card {
+  background: #ffffff;
+}
+
+.report-chart-header {
+  padding: 22px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+}
+
+.report-chart-title {
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.report-chart-subtitle {
+  color: #64748b;
+  font-size: 0.86rem;
+}
+
+.chart-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 1.45rem;
+  flex-shrink: 0;
+}
+
+.report-chart-body {
+  padding: 22px 26px 26px;
+  background: #ffffff;
+  min-height: 340px;
+}
+
+/* Contenedor interno para gráficos dinámicos */
+.report-chart-body app-dynamic-chart {
+  display: block;
+  width: 100%;
+}
+
+/* ==========================
+   BOOTSTRAP SUPPORT
+========================== */
+
+.row.g-3 {
+  --bs-gutter-x: 1rem;
+  --bs-gutter-y: 1rem;
+}
+
+/* ==========================
+   TABULATOR TABLE CARD
+========================== */
+
+.report-table-card {
+  background: #ffffff;
+}
+
+/* ==========================
+   TABLE HEADER
+========================== */
+
+.report-table-header {
+  padding: 20px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.report-table-title {
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.report-table-subtitle {
+  color: #64748b;
+  font-size: 0.86rem;
+}
+
+/* ==========================
+   TABLE BODY
+========================== */
+
+.report-table-body {
+  padding: 18px;
+  background: #f8fafc;
+}
+
+.tabulator-container {
+  width: 100%;
+  min-height: 440px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* ==========================
+   TABLE ACTIONS
+========================== */
+
+.table-toolbar {
+  align-items: center;
+}
+
+.table-action-btn {
+  height: 40px;
+  min-width: 104px;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  border-color: #cbd5e1 !important;
+  background: #ffffff !important;
+}
+
+.table-action-btn:hover {
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+}
+
+/* ==========================
+   TABULATOR CUSTOM STYLE
+========================== */
+
+::ng-deep .tabulator {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  font-size: 0.9rem;
+  overflow: hidden;
+}
+
+::ng-deep .tabulator .tabulator-header {
+  background: linear-gradient(135deg, #053f87, #014b5e) !important;
+  border-bottom: none !important;
+}
+
+::ng-deep .tabulator .tabulator-header .tabulator-col {
+  background: transparent !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+::ng-deep .tabulator .tabulator-header .tabulator-col-title {
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 0.86rem;
+}
+
+::ng-deep .tabulator .tabulator-header .tabulator-col-sorter {
+  color: #ffffff !important;
+}
+
+/* Filtros de columnas */
+::ng-deep .tabulator .tabulator-header-filter input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+  outline: none;
+}
+
+::ng-deep .tabulator .tabulator-header-filter input:focus {
+  border-color: #053f87;
+  box-shadow: 0 0 0 2px rgba(5, 63, 135, 0.12);
+}
+
+/* Filas */
+::ng-deep .tabulator .tabulator-row {
+  border-bottom: 1px solid #edf2f7 !important;
+}
+
+::ng-deep .tabulator .tabulator-row:nth-child(even) {
+  background: #fbfdff !important;
+}
+
+::ng-deep .tabulator .tabulator-row:nth-child(odd) {
+  background: #ffffff !important;
+}
+
+::ng-deep .tabulator .tabulator-row:hover {
+  background: #eef6ff !important;
+}
+
+/* Celdas */
+::ng-deep .tabulator .tabulator-cell {
+  padding: 10px 12px !important;
+  border-right: 1px solid #edf2f7 !important;
+  color: #1e293b;
+  font-size: 0.88rem;
+}
+
+/* Placeholder */
+::ng-deep .tabulator .tabulator-placeholder {
+  color: #64748b !important;
+  font-size: 0.95rem;
+}
+
+/* Footer / paginación */
+::ng-deep .tabulator .tabulator-footer {
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+  padding: 10px !important;
+}
+
+::ng-deep .tabulator .tabulator-page {
+  border-radius: 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #334155 !important;
+  padding: 5px 10px !important;
+  margin: 0 3px !important;
+  font-weight: 600;
+}
+
+::ng-deep .tabulator .tabulator-page:hover {
+  background: #f1f5f9 !important;
+}
+
+::ng-deep .tabulator .tabulator-page.active {
+  background: #053f87 !important;
+  color: #ffffff !important;
+  border-color: #053f87 !important;
+}
+
+/* Selector de tamaño de página */
+::ng-deep .tabulator .tabulator-page-size {
+  border-radius: 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 5px 8px !important;
+  outline: none;
+}
+
+/* Scroll */
+::ng-deep .tabulator .tabulator-tableholder::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+::ng-deep .tabulator .tabulator-tableholder::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::ng-deep .tabulator .tabulator-tableholder::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+::ng-deep .tabulator .tabulator-tableholder::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media (max-width: 992px) {
+  .reports-viewer {
+    padding: 18px;
+  }
+
+  .report-toolbar-header {
+    padding: 22px 24px;
+  }
+
+  .report-toolbar-body {
+    padding: 22px 24px 26px;
+  }
+
+  .report-chart-header,
+  .report-chart-body {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .reports-viewer {
+    padding: 14px;
+  }
+
+  .report-toolbar-card,
+  .report-chart-card,
+  .report-table-card {
+    border-radius: 20px;
+  }
+
+  .report-toolbar-header {
+    padding: 20px;
+  }
+
+  .report-toolbar-body {
+    padding: 20px;
+  }
+
+  .report-title {
+    font-size: 1rem;
+  }
+
+  .report-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .toolbar-btn-primary,
+  .toolbar-btn-secondary {
+    width: 100%;
+  }
+
+  .report-chart-header {
+    padding: 18px;
+    align-items: flex-start;
+  }
+
+  .report-chart-body {
+    padding: 18px;
+    min-height: 280px;
+  }
+
+  .chart-icon {
+    display: none;
+  }
+
+  .report-table-header {
+    padding: 18px;
+  }
+
+  .report-table-body {
+    padding: 12px;
+  }
+
+  .tabulator-container {
+    min-height: 380px;
+  }
+
+  .table-toolbar {
+    width: 100%;
+  }
+
+  .table-action-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .reports-viewer {
+    padding: 10px;
+  }
+
+  .report-toolbar-card,
+  .report-chart-card,
+  .report-table-card {
+    border-radius: 18px;
+  }
+
+  .report-toolbar-header {
+    padding: 18px;
+  }
+
+  .report-toolbar-body {
+    padding: 18px;
+  }
+
+  .report-chart-header,
+  .report-chart-body {
+    padding: 16px;
+  }
+}

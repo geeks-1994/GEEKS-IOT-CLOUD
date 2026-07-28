@@ -1,0 +1,242 @@
+<div
+  class="catalogue-modal-backdrop"
+  *ngIf="visible"
+  (click)="close()">
+
+  <div
+    class="catalogue-modal"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="modalTitle"
+    (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="catalogue-modal-header">
+
+      <div>
+        <h5 class="catalogue-modal-title">
+          {{ modalTitle }}
+        </h5>
+
+        <p class="catalogue-modal-subtitle">
+          Complete la información del registro.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Cerrar"
+        (click)="close()">
+      </button>
+
+    </div>
+
+    <!-- Body -->
+    <div class="catalogue-modal-body">
+
+      <form
+        [formGroup]="form"
+        (ngSubmit)="submit()">
+
+        <div class="row g-3">
+
+          <ng-container
+            *ngFor="let field of config?.fields">
+
+            <div
+              [class]="field.colClass || 'col-12'">
+
+              <!-- Text, email, number y date -->
+              <div
+                *ngIf="
+                  field.type === 'text' ||
+                  field.type === 'email' ||
+                  field.type === 'number' ||
+                  field.type === 'date'
+                ">
+
+                <label
+                  class="form-label"
+                  [for]="field.name">
+
+                  {{ field.label }}
+
+                  <span
+                    class="text-danger"
+                    *ngIf="field.required">
+                    *
+                  </span>
+
+                </label>
+
+                <input
+                  class="form-control"
+                  [class.is-invalid]="isInvalid(field.name)"
+                  [id]="field.name"
+                  [type]="field.type"
+                  [formControlName]="field.name"
+                  [placeholder]="field.placeholder || ''"
+                  [attr.min]="field.min ?? null"
+                  [attr.max]="field.max ?? null"
+                  [attr.step]="field.step ?? null">
+
+                <div
+                  class="invalid-feedback"
+                  *ngIf="isInvalid(field.name)">
+
+                  {{ getFieldError(field) }}
+
+                </div>
+
+              </div>
+
+              <!-- Select -->
+              <div *ngIf="field.type === 'select'">
+
+                <label
+                  class="form-label"
+                  [for]="field.name">
+
+                  {{ field.label }}
+
+                  <span
+                    class="text-danger"
+                    *ngIf="field.required">
+                    *
+                  </span>
+
+                </label>
+
+                <select
+                  class="form-select"
+                  [class.is-invalid]="isInvalid(field.name)"
+                  [id]="field.name"
+                  [formControlName]="field.name">
+
+                  <option value="">
+                    Seleccione una opción
+                  </option>
+
+                  <option
+                    *ngFor="let option of field.options || []"
+                    [ngValue]="option.value">
+
+                    {{ option.label }}
+
+                  </option>
+
+                </select>
+
+                <div
+                  class="invalid-feedback"
+                  *ngIf="isInvalid(field.name)">
+
+                  {{ getFieldError(field) }}
+
+                </div>
+
+              </div>
+
+              <!-- Textarea -->
+              <div *ngIf="field.type === 'textarea'">
+
+                <label
+                  class="form-label"
+                  [for]="field.name">
+
+                  {{ field.label }}
+
+                  <span
+                    class="text-danger"
+                    *ngIf="field.required">
+                    *
+                  </span>
+
+                </label>
+
+                <textarea
+                  rows="4"
+                  class="form-control"
+                  [class.is-invalid]="isInvalid(field.name)"
+                  [id]="field.name"
+                  [formControlName]="field.name"
+                  [placeholder]="field.placeholder || ''">
+                </textarea>
+
+                <div
+                  class="invalid-feedback"
+                  *ngIf="isInvalid(field.name)">
+
+                  {{ getFieldError(field) }}
+
+                </div>
+
+              </div>
+
+              <!-- Checkbox -->
+              <div
+                class="form-check form-switch mt-4"
+                *ngIf="field.type === 'checkbox'">
+
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [id]="field.name"
+                  [formControlName]="field.name">
+
+                <label
+                  class="form-check-label"
+                  [for]="field.name">
+
+                  {{ field.label }}
+
+                </label>
+
+              </div>
+
+            </div>
+
+          </ng-container>
+
+        </div>
+
+      </form>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="catalogue-modal-footer">
+
+      <button
+        type="button"
+        class="btn btn-light"
+        (click)="close()">
+
+        Cancelar
+
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary d-inline-flex align-items-center gap-2"
+        (click)="submit()">
+
+        <i
+          class="bi"
+          [ngClass]="{
+            'bi-plus-lg': mode === 'create',
+            'bi-check-lg': mode === 'update'
+          }">
+        </i>
+
+        {{ submitButtonText }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
