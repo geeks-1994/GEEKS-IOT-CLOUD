@@ -1,31 +1,49 @@
-<div class="login-page d-flex align-items-center justify-content-center">
+<div class="login-page">
 
-  <div class="login-card container-fluid">
+  <div class="login-card">
 
-    <div class="row h-100">
+    <div class="row g-0 h-100">
 
-      <!-- Branding -->
-      <div class="col-12 col-md-6 d-flex align-items-center justify-content-center text-center brand-section">
-        <div>
-          <h1 class="brand-title">geeks-iot-cloud</h1>
+      <!-- BRANDING -->
+      <div class="col-12 col-md-6 brand-section">
+
+        <div class="brand-content">
+
+          <h1 class="brand-name">
+            geeks-<span>iot</span>-cloud
+          </h1>
+
           <p class="brand-subtitle">
             Plataforma corporativa de monitoreo e integración IoT
           </p>
 
-          <button type="button" class="btn btn-outline-light rounded-pill px-4">
+          <button
+            type="button"
+            class="btn btn-outline-light rounded-pill px-4"
+            (click)="openRegisteruser()"
+          >
             Crear nueva cuenta
           </button>
+
         </div>
+
       </div>
 
-      <!-- Login -->
-      <div class="col-12 col-md-6 d-flex align-items-center justify-content-center form-section">
 
-        <form class="login-form w-100">
+      <!-- LOGIN -->
+      <div class="col-12 col-md-6 form-section">
 
-          <h2 class="text-white mb-4">Iniciar sesión</h2>
+        <form
+          class="login-form"
+          (ngSubmit)="login()"
+        >
+
+          <h2 class="login-title">
+            Iniciar sesión
+          </h2>
 
           <div class="mb-3">
+
             <input
               type="email"
               class="form-control login-input"
@@ -34,29 +52,43 @@
               name="name"
               [(ngModel)]="user"
             />
+
           </div>
 
-          <div class="mb-3">
-            <input
-              type="password"
-              class="form-control login-input"
-              placeholder="Contraseña"
-              autocomplete="current-password"
-              name="password"
-              [(ngModel)]="password"
-            />
-          </div>
+    <div class="mb-3 password-container">
 
-          <div class="d-flex justify-content-between align-items-center mt-2">
-            <a href="#" class="forgot-link">
-              ¿Olvidaste tu contraseña?
-            </a>
+  <input
+    [type]="showPassword ? 'text' : 'password'"
+    class="form-control login-input"
+    placeholder="Contraseña"
+    autocomplete="current-password"
+    name="password"
+    [(ngModel)]="password"
+  />
 
-            <button type="submit" class="btn btn-login" (click)="login()">
-              Entrar
-              <span>›</span>
-            </button>
-          </div>
+  <button
+    type="button"
+    class="password-toggle"
+    (click)="togglePassword()"
+    [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+  >
+    <i
+      class="bi"
+      [class.bi-eye]="!showPassword"
+      [class.bi-eye-slash]="showPassword"
+    ></i>
+  </button>
+
+</div>
+
+      <button
+  type="submit"
+  class="btn btn-login"
+>
+  <span class="btn-login-text">Entrar</span>
+
+  <i class="bi bi-arrow-right-short btn-login-icon"></i>
+</button>
 
         </form>
 
@@ -64,14 +96,20 @@
 
     </div>
 
+
+    <!-- FOOTER -->
     <div class="login-footer">
+
       <a href="#">Acerca de</a>
       <span>|</span>
+
       <a href="#">Contacto</a>
       <span>|</span>
+
       <a href="#">Ayuda</a>
+
     </div>
-    
+
   </div>
 
 </div>

@@ -37,3 +37,18 @@ body {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.register-user-backdrop {
+  background: rgba(2, 12, 22, 0.72) !important;
+  backdrop-filter: blur(6px);
+}
+
+.register-user-dialog .mat-mdc-dialog-container {
+  padding: 0 !important;
+}
+
+.register-user-dialog .mat-mdc-dialog-surface {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 28px !important;
+  overflow: hidden !important;
+}

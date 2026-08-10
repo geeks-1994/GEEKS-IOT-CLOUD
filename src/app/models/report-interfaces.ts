@@ -303,9 +303,49 @@ export interface FleetDataDashboard{
 
   chartDataEficiency:DynamicChartConfig;
   chartDataFleet:DynamicChartConfig;
-  selectedTable:any[],
-  data:any[]
+  selectedTable:any[];
+  data:any[];
+  title:string;
 }
 
 
+type ConvertType = 'number' | 'string' | 'boolean';
 
+export function convertArrayType(
+  values: unknown[],
+  type: ConvertType
+): Array<number | string | boolean> {
+  switch (type) {
+    case 'number':
+      return values.map(value => {
+        const converted = Number(value);
+
+        if (Number.isNaN(converted)) {
+          return 0;
+        }
+
+        return converted;
+      });
+
+    case 'boolean':
+      return values.map(value => {
+        if (typeof value === 'string') {
+          return value.toLowerCase() === 'true' || value === '1';
+        }
+
+        return Boolean(value);
+      });
+
+    case 'string':
+    default:
+      return values.map(value => String(value));
+  }
+}
+
+export interface DynamicChartModalData {
+  title?: string;
+  description?: string;
+  chartConfig:DynamicChartConfig;
+  width?: string;
+  height?: string;
+};

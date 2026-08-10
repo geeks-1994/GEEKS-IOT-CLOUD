@@ -60,6 +60,14 @@ export class MainLayout  implements OnInit{
             '/main/reportviewer',
             'summary_data'
           ]
+        },
+        {
+          name:"Level_data",
+          description:"Comportamiento de Tanque",
+          route:[
+           '/main/reportviewer',
+           'Fuel_Measure'
+          ]
         }
       ]
     }
@@ -137,7 +145,7 @@ checkSession(): void {
       this.router.navigate(['/']);
     }
   });
-}
+};
 
 
 trackByMenuName(index: number, menu: any): string {
@@ -147,5 +155,28 @@ trackByMenuName(index: number, menu: any): string {
 trackBySubMenuDescription(index: number, item: any): string {
   return item.description;
 };
+
+
+
+async logOut():Promise<void>{
+
+  try {
+  const response = await  this.tools.question('Log out','Desea salir de la session.');
+
+  if(response.isConfirmed){
+      this.services.clearSession();
+
+      localStorage.removeItem('gsuiteToken');
+
+      this.tools.info('Session','te esperamos nuevamente ...:)');
+
+      this.router.navigate(['/']);
+
+  }
+  } catch (error) {
+    
+  }
+
+}
 
 }

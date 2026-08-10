@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {isPlatformBrowser} from '@angular/common'
 import { Injectable,Inject,PLATFORM_ID, signal,computed } from '@angular/core';
 import {Observable,throwError} from 'rxjs';
-import { GsuiteLoginResponse, GsuiteUser, GtokenDatasession, ParametersCatalogue, ReportCatalogue, RequestPayload, resultRegister, SessionData } from '../models/generals-interfaces';
+import { GsuiteLoginResponse, GsuiteUser, GtokenDatasession, MeasureData, ParametersCatalogue, ReportCatalogue, RequestMeasure, RequestPayload, ResultMeasure, resultRegister, SessionData, ToolbarOptions } from '../models/generals-interfaces';
 import { ChartReport } from '../models/report-interfaces';
 import { ApexYAxis } from 'apexcharts';
  
@@ -97,6 +97,19 @@ public reports: ReportCatalogue[] = [
           { label: 'Pesado', value: 'pesado' }
         ]
       },{
+      name: 'selectedGroupVehicle',
+        label: 'Grupo',
+        type: 'select',
+        enabled: true,
+        value: '',
+        colClass: 'col-12 col-md-3 col-lg-3',
+        options: [
+          { label: 'Todos', value: '' },
+          { label: 'Liviano', value: 'liviano' },
+          { label: 'Pesado', value: 'pesado' }
+        ]
+      },
+      {
         name: 'selectedDispenser',
         label: 'Dispensador',
         type: 'select',
@@ -155,7 +168,8 @@ public reports: ReportCatalogue[] = [
     const value = Number(cell.getValue() || 0);
     return value.toFixed(2);
   } }
-]
+],
+  enableGrid:true
   },
   {
     name:'summary_data',
@@ -191,10 +205,30 @@ public reports: ReportCatalogue[] = [
           { label: 'Liviano', value: 'liviano' },
           { label: 'Pesado', value: 'pesado' }
         ]
+      },{
+      name: 'selectedGroupVehicle',
+        label: 'Grupo',
+        type: 'select',
+        enabled: true,
+        value: '',
+        colClass: 'col-12 col-md-3 col-lg-3',
+        options: [
+          { label: 'Todos', value: '' },
+          { label: 'Liviano', value: 'liviano' },
+          { label: 'Pesado', value: 'pesado' }
+        ]
       },
        {
         name: 'GroupTransactions',
         label: 'Agrupar transacciones',
+        type: 'checkbox',
+        enabled: true,
+        value: false,
+        colClass: 'col-12 col-md-3 col-lg-2'
+      },
+      {
+        name: 'GroupDriver',
+        label: 'Resumir por conductor',
         type: 'checkbox',
         enabled: true,
         value: false,
@@ -216,7 +250,48 @@ public reports: ReportCatalogue[] = [
     return value.toFixed(2);
   } }
 
-    ]
+    ],
+    enableGrid:true
+  },
+  {
+    name:'Fuel_Measure',
+    enableChart:true,
+    title:'Comportamiento de tanque',
+    method: () => {},
+    parameters:[
+          {
+        name: 'StartDate',
+        label: 'Fecha inicio',
+        type: 'date',
+        enabled: true,
+        value: null,
+        colClass: 'col-12 col-md-3 col-lg-2'
+      },
+      {
+        name: 'EndDate',
+        label: 'Fecha fin',
+        type: 'date',
+        enabled: true,
+        value: null,
+        colClass: 'col-12 col-md-3 col-lg-2'
+      },
+      {
+        name: 'selectedDispenser',
+        label: 'Dispensador',
+        type: 'select',
+        enabled: true,
+        value: '',
+        colClass: 'col-12 col-md-3 col-lg-3',
+        options: [
+          { label: 'Todos', value: '' },
+          { label: 'Candelaria', value: 'Candelaria' },
+          { label: 'ICSA01', value: 'ICSA01' }
+        ]
+
+      }
+    ],
+    columns:[],
+    enableGrid:false
   }
 ];
    
@@ -336,6 +411,265 @@ public chartReports:ChartReport[] = [
 
 
     }
+  },
+  {
+    name:'Fleet_dashboard',
+    chart:{
+      series:[],
+      xaxis:{categories:[]},
+      colors:['#4f46e5', '#d8cb1aff', '#33c858'],
+      chart:{
+        type:'area',
+        stacked:true,
+        toolbar:{
+          show:true,
+            tools: {
+        download: true,
+        selection: true,
+        zoom: true,
+        zoomin: true,
+        zoomout: true,
+        pan: true,
+        reset: true
+      },
+        },
+        zoom:{
+          enabled:true
+        }
+      },
+      dataLabels:{
+        enabled:true
+      },
+      stroke:{
+        curve:'smooth',
+ width: [1, 2, 2],
+      },
+      fill:{
+        type:'gradient',  
+        gradient: {
+              opacityFrom: 1,
+              opacityTo: 0.8,
+            },
+      },
+      tooltip: {
+            fixed: {
+              enabled: true,
+              position: 'topLeft', // topRight, topLeft, bottomRight, bottomLeft
+              offsetY: 30,
+              offsetX: 60,
+            },
+          },
+      legend: {
+            horizontalAlign:'center',
+            offsetX: 40,
+          },
+        yaxis:[
+             {
+              seriesName: 'Cantidad',
+              axisTicks: {
+                show: true,
+              },
+              axisBorder: {
+                show: true,
+                color: '#4f46e5',
+              },
+              labels: {
+                style: {
+                  colors: '#4f46e5',
+                },
+              },
+              title: {
+                text: 'Cantidad',
+                style: {
+                  color: '#4f46e5',
+                },
+              },
+              tooltip: {
+                enabled: true,
+              },
+            },
+             {
+              seriesName: 'Eficiencia',
+              opposite: true,
+              axisTicks: {
+                show: true,
+              },
+              axisBorder: {
+                show: true,
+                color: '#d8cb1aff',
+              },
+              labels: {
+                style: {
+                  colors: '#d8cb1aff',
+                },
+              },
+              title: {
+                text: 'Eficiencia',
+                style: {
+                  color: '#d8cb1aff',
+                },
+              },
+            },
+                {
+              seriesName: 'Distancia',
+              opposite: true,
+              axisTicks: {
+                show: true,
+              },
+              axisBorder: {
+                show: true,
+                color: '#33c858',
+              },
+              labels: {
+                style: {
+                  colors: '#33c858',
+                },
+              },
+              title: {
+                text: 'Distancia',
+                style: {
+                  color: '#33c858',
+                },
+              },
+            }
+        ]
+
+  }
+},
+{
+  name:"efficenci_avg",
+  chart:{
+    series:[],
+    chart:{
+      type:'area',
+      stacked:true,
+      sparkline:{
+        enabled:true
+      }
+    },
+    stroke:{
+      curve:'straight'
+    },
+    fill:{
+      opacity:0.3
+    },
+    yaxis:{
+      min:0
+    },
+    colors:['#efc313'],
+    title:{
+      text:'eficieciancia promedio',
+      offsetX:0,
+      style:{
+        fontSize:'24px',
+        color:'#2e1d90'
+      }
+    },
+    subtitle:{
+      text:'km/gal',
+      offsetX:0,
+      offsetY:40,
+      style:{
+        fontSize:'14px',
+        color:'#2e1d90'
+      }
+    }
+
+  }
+},
+{
+  name:'Fuel_Measure',
+  chart:{
+    series:[],
+    xaxis:{type:'datetime'},
+    chart:{
+      type:'area',
+      stacked:false,
+       toolbar:{
+          show:true,
+            tools: {
+        download: true,
+        selection: true,
+        zoom: true,
+        zoomin: true,
+        zoomout: true,
+        pan: true,
+        reset: true
+      },
+        },
+        zoom:{
+          enabled:true,
+          type:'x',
+          autoScaleYaxis:false
+        }
+    },
+    dataLabels:{
+      enabled:false
+    },
+    stroke:{
+      curve:'smooth'
+    },
+    markers:{
+      size:0,
+    },
+    yaxis:{
+      min:0,
+      forceNiceScale: false
+    },
+    fill:{
+            type: 'gradient',
+            colors:['#139bef'],
+            gradient: {
+              shadeIntensity: 1,
+              inverseColors: false,
+              opacityFrom: 0.5,
+              opacityTo: 0.7,
+              stops: [0, 90, 100],
+            },
+          }
+  }
+}
+];
+
+public toolbarConfig:ToolbarOptions[] = [
+  {
+    name:'fleet_dashboard',
+    options:[
+         {
+        name: 'selectedTypeVehicle',
+        label: 'Tipo vehículo',
+        type: 'select',
+        enabled: true,
+        value: '',
+        colClass: 'col-12 col-md-3 col-lg-3',
+        options: [
+          { label: 'Todos', value: '' },
+          { label: 'Liviano', value: 'liviano' },
+          { label: 'Pesado', value: 'pesado' }
+        ]
+      },
+      {
+      name: 'selectedGroupVehicle',
+        label: 'Grupo',
+        type: 'select',
+        enabled: true,
+        value: '',
+        colClass: 'col-12 col-md-3 col-lg-3',
+        options: [
+          { label: 'Todos', value: '' },
+          { label: 'Liviano', value: 'liviano' },
+          { label: 'Pesado', value: 'pesado' }
+        ]
+      },
+       {
+        name: 'TransactionsOk',
+        label: 'Registros correctos',
+        type: 'checkbox',
+        enabled: true,
+        value: false,
+        colClass: 'col-12 col-md-3 col-lg-2'
+      }
+    ]
   }
 ]
 
@@ -410,7 +744,35 @@ return this.http.post<T[]>(uri,sendto,{headers:header});
 
     return this.http.post<resultRegister>(uri, sendto, { headers: header });
 
-  }
+  };
+
+  GetPostMeasure(sendto:RequestMeasure):Observable<ResultMeasure>{
+    const uri = `${this.baseURL}/gsuite/Measuredata`;
+
+    const header = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<ResultMeasure>(uri, sendto, { headers: header });
+
+  }; 
+
+
+
+    UpdatePasswordUser(userId:string,password:string): Observable<any> {
+
+    const url = `${this.baseURL}/gsuite/users/${userId}/password`; // Endpoint para actualizar la contraseña
+
+    const body = {password };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(url, body, { headers }); 
+
+  };
+  
 
 
 }

@@ -18,6 +18,9 @@
       </div>
     </div>
 
+
+    <!-- toolbar -->
+
     <!-- Body -->
     <div class="report-toolbar-body">
 
@@ -186,6 +189,7 @@
     </div>
   }
 
+  @if (selectedReport()?.enableGrid){
   <!-- TABLE CARD -->
   <div class="report-table-card shadow-sm mt-4">
 
@@ -193,6 +197,8 @@
 
       <div>
         <span class="table-eyebrow">Detalle de datos</span>
+
+
 
         <h6 class="report-table-title mb-1">
           Resultado del reporte
@@ -205,6 +211,14 @@
 
       <div class="table-toolbar d-flex flex-column flex-sm-row gap-2">
         <!-- Botones futuros -->
+                 <button
+  type="button"
+  class="btn btn-success"
+  (click)="downloadExcel()"
+>
+  <i class="bi bi-file-earmark-excel"></i>
+  Exportar Excel
+</button>
       </div>
 
     </div>
@@ -214,5 +228,7 @@
     </div>
 
   </div>
+  }
+
 
 </div>

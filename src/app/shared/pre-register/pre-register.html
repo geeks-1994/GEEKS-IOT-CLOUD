@@ -1,0 +1,392 @@
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<div class="form-header">
+
+  <div class="header-icon">
+    <i class="bi bi-person-check"></i>
+  </div>
+
+  
+
+  <div class="header-text">
+    <h2>Completar registro</h2>
+
+    <p>
+      Valida tu token y crea una contraseña para activar tu cuenta.
+    </p>
+  </div>
+
+  <button
+    type="button"
+    class="close-btn"
+    (click)="closeModal()">
+
+    <i class="bi bi-x-lg"></i>
+
+  </button>
+
+</div>
+
+
+<!-- =========================================================
+     FORM
+========================================================= -->
+
+<form (ngSubmit)="save()">
+
+
+  <!-- =======================================================
+       TOKEN
+  ======================================================== -->
+
+  <div class="form-group">
+
+    <label for="token">
+      Token de validación
+    </label>
+
+    <div class="input-action">
+
+      <div class="input-container">
+
+        <i class="bi bi-key input-icon"></i>
+
+        <input
+          id="token"
+          type="text"
+          class="form-control"
+
+          placeholder="Ingresa tu token"
+
+          [ngModel]="token()"
+          (ngModelChange)="token.set($event)"
+
+          name="token"
+
+          autocomplete="one-time-code"
+
+          required
+        />
+
+      </div>
+
+
+      <button
+        type="button"
+        class="btn-token"
+
+        (click)="sendToken()"
+
+        [disabled]="tokenDisabled()">
+
+        <span
+          *ngIf="validatingToken()"
+          class="spinner-border spinner-border-sm">
+        </span>
+
+        <i
+          *ngIf="!validatingToken()"
+          class="bi bi-send">
+        </i>
+
+        {{
+          validatingToken()
+            ? 'Validando...'
+            : 'Validar'
+        }}
+
+      </button>
+
+    </div>
+
+
+    <small class="helper-text">
+
+      Usa el token que recibiste para validar tu sesión.
+
+    </small>
+
+  </div>
+
+
+  <!-- =======================================================
+       TOKEN VALIDADO
+  ======================================================== -->
+
+  <div
+    class="token-success"
+    *ngIf="passwordValid()">
+
+    <i class="bi bi-check-circle-fill"></i>
+
+    <span>
+      Token validado correctamente.
+    </span>
+
+  </div>
+
+
+  <!-- =======================================================
+       USER ID
+  ======================================================== -->
+
+  <div class="form-group">
+
+    <label for="userId">
+      User ID
+    </label>
+
+    <div class="input-container readonly-input">
+
+      <i class="bi bi-person-badge input-icon"></i>
+
+      <input
+        id="userId"
+        type="text"
+        class="form-control"
+
+        [value]="userId()"
+
+        readonly
+      />
+
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       EMAIL
+  ======================================================== -->
+
+  <div class="form-group">
+
+    <label for="email">
+      Correo electrónico
+    </label>
+
+    <div class="input-container readonly-input">
+
+      <i class="bi bi-envelope input-icon"></i>
+
+      <input
+        id="email"
+        type="email"
+        class="form-control"
+
+        [value]="email()"
+
+        readonly
+      />
+
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       PASSWORD
+  ======================================================== -->
+
+  <div class="form-group">
+
+    <label for="password">
+      Contraseña
+    </label>
+
+    <div
+      class="input-container password-container"
+
+      [class.disabled]="passwordDisabled()">
+
+      <i class="bi bi-lock input-icon"></i>
+
+
+      <input
+        id="password"
+
+        [type]="
+          showPassword()
+            ? 'text'
+            : 'password'
+        "
+
+        class="form-control password-input"
+
+        placeholder="Crea una contraseña"
+
+        [ngModel]="password()"
+
+        (ngModelChange)="onPasswordChange($event)"
+
+        name="password"
+
+        minlength="8"
+        maxlength="64"
+
+        [disabled]="passwordDisabled()"
+      />
+
+
+      <!-- SHOW PASSWORD -->
+
+      <button
+        type="button"
+        class="password-toggle"
+
+        (click)="toggleShowPassword()"
+
+        [disabled]="passwordDisabled()">
+
+        <i
+          class="bi"
+
+          [ngClass]="
+            showPassword()
+              ? 'bi-eye-slash'
+              : 'bi-eye'
+          ">
+        </i>
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       PASSWORD STRENGTH
+  ======================================================== -->
+
+  <div
+    class="password-strength"
+
+    *ngIf="passwordValid()">
+
+
+    <div class="strength-header">
+
+      <span>
+        Seguridad de contraseña
+      </span>
+
+
+      <span
+        class="strength-label"
+
+        [class.weak]="
+          strengthLevel() === 1
+        "
+
+        [class.medium]="
+          strengthLevel() === 2
+        "
+
+        [class.strong]="
+          strengthLevel() >= 3
+        ">
+
+        {{ strengthLabel() }}
+
+      </span>
+
+    </div>
+
+
+    <!-- STRENGTH BARS -->
+
+    <div class="strength-bars">
+
+      <!-- NIVEL 1 -->
+
+      <span
+        [class.active]="
+          strengthLevel() >= 1
+        "
+
+        [class.weak]="
+          strengthLevel() === 1
+        ">
+      </span>
+
+
+      <!-- NIVEL 2 -->
+
+      <span
+        [class.active]="
+          strengthLevel() >= 2
+        "
+
+        [class.medium]="
+          strengthLevel() === 2
+        ">
+      </span>
+
+
+      <!-- NIVEL 3 -->
+
+      <span
+        [class.active]="
+          strengthLevel() >= 3
+        "
+
+        [class.strong]="
+          strengthLevel() >= 3
+        ">
+      </span>
+
+    </div>
+
+
+    <small class="helper-text password-requirements">
+
+      Utiliza al menos 8 caracteres e incluye mayúscula,
+      minúscula, número y símbolo.
+
+    </small>
+
+  </div>
+
+
+  <!-- =======================================================
+       SAVE
+  ======================================================== -->
+
+  <button
+    type="submit"
+
+    class="save-btn"
+
+    [disabled]="!canSave()">
+
+
+    <!-- LOADING -->
+
+    <span
+      *ngIf="saving()"
+
+      class="spinner-border spinner-border-sm">
+    </span>
+
+
+    <!-- ICON -->
+
+    <i
+      *ngIf="!saving()"
+
+      class="bi bi-check-lg">
+    </i>
+
+
+    {{
+      saving()
+        ? 'Guardando...'
+        : 'Completar registro'
+    }}
+
+  </button>
+
+</form>

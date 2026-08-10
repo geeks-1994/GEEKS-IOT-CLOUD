@@ -120,6 +120,17 @@ export interface VehicleBrandCatalogue {
 };
 
 
+export interface GroupVehicles {
+  
+  Id:string;
+  Name:string;
+  Nit:string;
+  company:string;
+  active:boolean;
+}
+
+
+
 export interface SessionData{
         userSalesforce:string;
       passwordSalesForce:string;
@@ -209,8 +220,19 @@ export interface ReportCatalogue {
   method: () => any;
   parameters: ParametersReport[];
   columns: any[];
-  enableChart:boolean
-}
+  enableChart:boolean;
+  enableGrid:boolean;
+};
+
+export interface ToolbarOptions{
+  name:string;
+  options:ParametersReport[];
+};
+
+export const EMPTY_TOOLBAR_OPTIONS: ToolbarOptions = {
+  name: '',
+  options: []
+};
 
 
 export interface transaction {
@@ -259,6 +281,16 @@ export interface transaction {
 
 };
 
+export interface MeasureData {
+  tskeyName:string;
+  tsTankid:string;
+  tstankDescription:string;
+  tsDateMeasure:string;
+  tsvoltage:number;
+  tsQuantity:number;
+  percent:number;
+};
+
 
 export interface RequestPayload {
   tosend: {
@@ -267,6 +299,7 @@ export interface RequestPayload {
     tankId: string;
     vehicleId: string;
     typeVehicle: string;
+    groupVehicle?:string;
   };
   user: string;
   password: string;
@@ -276,9 +309,25 @@ export interface RequestPayload {
 };
 
 
+export interface RequestMeasure {
+  tosend:{
+        startDate: string; // ISO Date String
+    endDate: string;   // ISO Date String
+    tankId: string;
+  }
+    user: string;
+  password: string;
+  company: string;
+}
+
 export interface resultRegister {
   success:boolean,
   data:transaction
+};
+
+export interface ResultMeasure {
+  success:boolean;
+  data:MeasureData;
 }
 
 export interface Miselanuos{

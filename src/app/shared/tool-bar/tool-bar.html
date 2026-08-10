@@ -1,0 +1,258 @@
+<!-- Body -->
+<div class="report-toolbar-body">
+
+  <div class="row g-3 align-items-end">
+
+    @for (parameter of toolbarState().options; track parameter.name) {
+
+      @if (parameter.enabled !== false) {
+
+        <div
+          [class]="
+            parameter.colClass ||
+            'col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2'
+          "
+        >
+
+          @switch (parameter.type) {
+
+            @case ('date') {
+              <mat-form-field
+                appearance="outline"
+                class="toolbar-field w-100"
+              >
+                <mat-label>
+                  {{ parameter.label || parameter.name }}
+                </mat-label>
+
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  [value]="parameter.value"
+                  [disabled]="parameter.readonly"
+                  (dateChange)="
+                    updateParameterValue(
+                      parameter.name,
+                      $event.value
+                    )
+                  "
+                />
+
+                <mat-datepicker-toggle
+                  matIconSuffix
+                  [for]="picker"
+                >
+                </mat-datepicker-toggle>
+
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            }
+
+            @case ('time') {
+              <mat-form-field
+                appearance="outline"
+                class="toolbar-field w-100"
+              >
+                <mat-label>
+                  {{ parameter.label || parameter.name }}
+                </mat-label>
+
+                <input
+                  matInput
+                  type="time"
+                  [value]="parameter.value"
+                  [disabled]="parameter.readonly"
+                  (input)="
+                    updateParameterValue(
+                      parameter.name,
+                      $any($event.target).value
+                    )
+                  "
+                />
+              </mat-form-field>
+            }
+
+            @case ('select') {
+              <mat-form-field
+                appearance="outline"
+                class="toolbar-field w-100"
+              >
+                <mat-label>
+                  {{ parameter.label || parameter.name }}
+                </mat-label>
+
+                <mat-select
+                  [value]="parameter.value"
+                  [disabled]="parameter.readonly"
+                  (selectionChange)="
+                    updateParameterValue(
+                      parameter.name,
+                      $event.value
+                    )
+                  "
+                >
+                  @for (
+                    option of parameter.options || [];
+                    track option.value
+                  ) {
+                    <mat-option [value]="option.value">
+                      {{ option.label }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            }
+
+            @case ('select-search') {
+              <mat-form-field
+                appearance="outline"
+                class="toolbar-field w-100"
+              >
+                <mat-label>
+                  {{ parameter.label || parameter.name }}
+                </mat-label>
+
+                <input
+                  matInput
+                  type="text"
+                  [value]="getOptionLabel(parameter)"
+                  [disabled]="parameter.readonly"
+                  [matAutocomplete]="auto"
+                  (input)="
+                    updateSearchText(
+                      parameter.name,
+                      $any($event.target).value
+                    )
+                  "
+                />
+
+                <mat-autocomplete
+                  #auto="matAutocomplete"
+                  (optionSelected)="
+                    updateParameterValue(
+                      parameter.name,
+                      $event.option.value
+                    )
+                  "
+                >
+                  @for (
+                    option of getFilteredOptions(parameter);
+                    track option.value
+                  ) {
+                    <mat-option [value]="option.value">
+                      {{ option.label }}
+                    </mat-option>
+                  }
+                </mat-autocomplete>
+              </mat-form-field>
+            }
+
+            @case ('checkbox') {
+              <div
+                class="
+                  toolbar-check-wrapper
+                  d-flex
+                  align-items-center
+                  h-100
+                "
+              >
+                <mat-checkbox
+                  [checked]="parameter.value"
+                  [disabled]="parameter.readonly"
+                  (change)="
+                    updateParameterValue(
+                      parameter.name,
+                      $event.checked
+                    )
+                  "
+                >
+                  {{ parameter.label || parameter.name }}
+                </mat-checkbox>
+              </div>
+            }
+
+            <!-- @case ('text') {
+              <mat-form-field
+                appearance="outline"
+                class="toolbar-field w-100"
+              >
+                <mat-label>
+                  {{ parameter.label || parameter.name }}
+                </mat-label>
+
+                <input
+                  matInput
+                  type="text"
+                  [value]="parameter.value"
+                  [readonly]="parameter.readonly"
+                  (input)="
+                    updateParameterValue(
+                      parameter.name,
+                      $any($event.target).value
+                    )
+                  "
+                />
+              </mat-form-field>
+            }
+
+            @case ('number') {
+              <mat-form-field
+                appearance="outline"
+                class="toolbar-field w-100"
+              >
+                <mat-label>
+                  {{ parameter.label || parameter.name }}
+                </mat-label>
+
+                <input
+                  matInput
+                  type="number"
+                  [value]="parameter.value"
+                  [readonly]="parameter.readonly"
+                  (input)="
+                    updateParameterValue(
+                      parameter.name,
+                      $any($event.target).valueAsNumber
+                    )
+                  "
+                />
+              </mat-form-field>
+            } -->
+
+          }
+
+        </div>
+      }
+
+    }
+
+<!-- Actions -->
+<div class="col-12 col-lg-auto ms-lg-auto toolbar-actions-column">
+
+  <div class="toolbar-actions d-flex flex-column flex-sm-row gap-2">
+
+    <button
+      type="button"
+      class="btn btn-primary toolbar-action-btn"
+      (click)="executeToolbar()"
+    >
+      <i class="bi bi-play-circle"></i>
+      <span>Generar</span>
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-outline-secondary toolbar-action-btn"
+      (click)="clearToolbar()"
+    >
+      <i class="bi bi-eraser"></i>
+      <span>Limpiar</span>
+    </button>
+
+  </div>
+
+</div>
+
+  </div>
+
+</div>

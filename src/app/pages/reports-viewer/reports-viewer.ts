@@ -5,10 +5,12 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  afterNextRender,
+  ChangeDetectorRef,
   AfterViewInit,
   Inject,
   PLATFORM_ID,
-  effect
+  effect 
 } from '@angular/core';
 
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -20,10 +22,12 @@ import { Tools } from '../../services/tools';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import {
+  MeasureData,
   Miselanuos,
   ParametersReport,
   ReportCatalogue,
   ReportName,
+  RequestMeasure,
   RequestPayload,
   resultRegister,
   transaction
@@ -46,6 +50,7 @@ import { ChartReport, createChartCategories, createChartSerie, DynamicChartConfi
 import { DynamicChart } from '../dynamic-chart/dynamic-chart';
 import { ApexXAxis } from 'apexcharts';
 import { ApexAxisChartSeries } from 'ng-apexcharts';
+import * as XLSX from 'xlsx';
 
 
 @Component({
@@ -95,6 +100,7 @@ export class ReportsViewer implements OnInit, AfterViewInit, OnDestroy {
     public tools: Tools,
     public router: Router,
     public route: ActivatedRoute,
+    private cdr:ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -113,7 +119,9 @@ this.route.paramMap
 
           this.loadReport(reportName);
 
-          await this.tryCreateOrUpdateTable();
+            this.cdr.detectChanges();
+             this.tryCreateOrUpdateTable();
+        
 
         } catch (error) {
           console.error('Error al cargar reporte:', error);
@@ -134,67 +142,127 @@ this.route.paramMap
   }
 
   ngOnDestroy(): void {
-    if (this.table) {
-      this.table.destroy();
-      this.table = null;
-    }
+
+    this.destroyTable();
   }
 
-  loadReport(reportName: ReportName): void {
-   
-    const report = this.services.reports.find(r => r.name === reportName);
-  const chartConfigTool  = this.services.chartReports.find(
+loadReport(reportName: ReportName): void {
+
+  const report = this.services.reports.find(
+    r => r.name === reportName
+  );
+
+  const chartConfigTool = this.services.chartReports.find(
     item => item.name === reportName
   );
 
-    if (!report) {
-      console.error('Report not found:', reportName);
+  if (!report) {
 
-      this.toolbarComponents.set([]);
-      this.selectedReport.set(null);
-      this.typeReport = null;
-      this.columnsReport.set([]);
+    console.error(
+      'Report not found:',
+      reportName
+    );
 
-      return;
-    }
+    this.toolbarComponents.set([]);
+    this.selectedReport.set(null);
+    this.typeReport = null;
+    this.columnsReport.set([]);
 
-    this.selectedReport.set(report);
+    this.destroyTable();
 
+    return;
+  }
 
-//    console.log(this.chartconfig());
-    this.typeReport = report.name;
-    this.titlereport.set(report.title);
-     this.chartconfig.set(chartConfigTool?.chart ?? EMPTY_CHART_CONFIG);
-   //   console.log(this.chartconfig());
+  // =====================================================
+  // IMPORTANTE
+  // =====================================================
 
-    this.columnsReport.set(report.columns || []);
+  if (!report.enableGrid) {
+    this.destroyTable();
+  }
 
-    const enabledParameters = report.parameters
-      .filter(parameter => parameter.enabled)
+  this.selectedReport.set(report);
+
+  this.typeReport = report.name;
+
+  this.titlereport.set(
+    report.title
+  );
+
+  this.chartconfig.set(
+    chartConfigTool?.chart ??
+    EMPTY_CHART_CONFIG
+  );
+
+  this.columnsReport.set(
+    report.columns || []
+  );
+
+  const enabledParameters =
+    report.parameters
+      .filter(parameter =>
+        parameter.enabled
+      )
       .map(parameter => {
+
         let options: Miselanuos[] = [];
 
-        if (parameter.name === 'selectedDispenser') {
-          options = this.miselaneousData.miselanousDataTank();
+        if (
+          parameter.name ===
+          'selectedDispenser'
+        ) {
+
+          options =
+            this.miselaneousData
+              .miselanousDataTank();
         }
 
-        if (parameter.name === 'selectedVehicle') {
-          options = this.miselaneousData.miselanousDataVehicle();
+        if (
+          parameter.name ===
+          'selectedVehicle'
+        ) {
+
+          options =
+            this.miselaneousData
+              .miselanousDataVehicle();
         }
 
-        if (parameter.name === 'selectedTypeVehicle') {
-          options = this.miselaneousData.miselanousDataVehicleBrand();
+        if (
+          parameter.name ===
+          'selectedTypeVehicle'
+        ) {
+
+          options =
+            this.miselaneousData
+              .miselanousDataVehicleBrand();
+        }
+
+        if (
+          parameter.name ===
+          'selectedGroupVehicle'
+        ) {
+
+          options =
+            this.miselaneousData
+              .MiselanousDataGroup();
         }
 
         return {
           ...parameter,
           options,
-          value: parameter.value ?? this.getDefaultValue(parameter.type)
+
+          value:
+            parameter.value ??
+            this.getDefaultValue(
+              parameter.type
+            )
         };
       });
 
-    this.toolbarComponents.set(enabledParameters);
-  }
+  this.toolbarComponents.set(
+    enabledParameters
+  );
+}
 
   private async tryCreateOrUpdateTable(): Promise<void> {
     if (!this.isBrowser) return;
@@ -225,6 +293,10 @@ this.route.paramMap
     const { TabulatorFull } = await import('tabulator-tables');
 
     this.table = new TabulatorFull(this.tabulatorTable.nativeElement, {
+     
+      dependencies:{
+        XLSX:XLSX
+      },
       data: this.reportData(),
       layout: 'fitColumns',
 
@@ -305,7 +377,12 @@ this.route.paramMap
     }else if(report.name === 'summary_data'){
 
       await this.ResumeData();
+    }else if(report.name === 'Fuel_Measure'){
+
+      await this.LevelData();
+
     }
+  
   }
 
   clearToolbar(): void {
@@ -322,11 +399,190 @@ this.route.paramMap
     this.table?.redraw(true);
   }
 
-  downloadExcel(): void {
-    this.table?.download('xlsx', 'reporte-datos-crudos.xlsx', {
-      sheetName: 'Reporte'
-    });
+ async downloadExcel():Promise<void> {
+
+  if (!this.table) {
+
+    console.warn(
+      'Tabulator aún no está inicializado'
+    );
+
+    this.tools.warning(
+      'Reporte',
+      'El reporte aun no esta cargado'
+    );
+
+    return;
   }
+
+  const response = await this.tools.question('Excel','Desea descargar este reporte ...');
+
+  if(response.isConfirmed){
+  this.table.download(
+    'xlsx',
+    `${this.titlereport()}.xlsx`,
+    {
+      sheetName: 'sheet1',
+
+      documentProcessing: (workbook: any) => {
+
+        const sheet =
+          workbook.Sheets['sheet1'];
+
+        if (!sheet || !sheet['!ref']) {
+          return workbook;
+        }
+
+        const range =
+          XLSX.utils.decode_range(
+            sheet['!ref']
+          );
+
+        const columnWidths: any[] = [];
+
+        // =====================================
+        // AUTOAJUSTAR COLUMNAS
+        // =====================================
+
+        for (
+          let col = range.s.c;
+          col <= range.e.c;
+          col++
+        ) {
+
+          let maxLength = 10;
+
+          for (
+            let row = range.s.r;
+            row <= range.e.r;
+            row++
+          ) {
+
+            const cellAddress =
+              XLSX.utils.encode_cell({
+                r: row,
+                c: col
+              });
+
+            const cell =
+              sheet[cellAddress];
+
+            if (!cell) {
+              continue;
+            }
+
+            const value =
+              String(cell.v ?? '');
+
+            maxLength =
+              Math.max(
+                maxLength,
+                value.length
+              );
+          }
+
+          columnWidths.push({
+            wch: Math.min(
+              maxLength + 3,
+              50
+            )
+          });
+        }
+
+        sheet['!cols'] =
+          columnWidths;
+
+
+        // =====================================
+        // ESTILO DEL HEADER
+        // =====================================
+
+        const headerRow =
+          range.s.r;
+
+        for (
+          let col = range.s.c;
+          col <= range.e.c;
+          col++
+        ) {
+
+          const cellAddress =
+            XLSX.utils.encode_cell({
+              r: headerRow,
+              c: col
+            });
+
+          const cell =
+            sheet[cellAddress];
+
+          if (!cell) {
+            continue;
+          }
+
+          cell.s = {
+
+            font: {
+              bold: true,
+
+              color: {
+                rgb: 'FFFFFF'
+              }
+            },
+
+            fill: {
+              patternType: 'solid',
+
+              fgColor: {
+                rgb: '334155'
+              }
+            },
+
+            alignment: {
+              horizontal: 'center',
+              vertical: 'center'
+            },
+
+            border: {
+
+              top: {
+                style: 'thin',
+                color: {
+                  rgb: 'D1D5DB'
+                }
+              },
+
+              bottom: {
+                style: 'thin',
+                color: {
+                  rgb: 'D1D5DB'
+                }
+              },
+
+              left: {
+                style: 'thin',
+                color: {
+                  rgb: 'D1D5DB'
+                }
+              },
+
+              right: {
+                style: 'thin',
+                color: {
+                  rgb: 'D1D5DB'
+                }
+              }
+            }
+          };
+        }
+
+        return workbook;
+      }
+    }
+  );
+  }
+
+
+};
 
   getFilteredOptions(parameter: any): Miselanuos[] {
     const options: Miselanuos[] = parameter.options || [];
@@ -354,6 +610,27 @@ this.route.paramMap
   }
 
 
+  private destroyTable(): void {
+
+  if (!this.table) {
+    return;
+  }
+
+  try {
+
+    this.table.destroy();
+
+  } catch (error) {
+
+    console.warn(
+      'Error destruyendo Tabulator:',
+      error
+    );
+
+  }
+  this.table = null;
+}
+
   //Reportes generados
 
 async GenerateRaw(){
@@ -368,7 +645,8 @@ async GenerateRaw(){
           endDate: moment(Enddate).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
           tankId: parameters['selectedDispenser'] || '',
           vehicleId: parameters['selectedVehicle'] || '',
-          typeVehicle: parameters['selectedTypeVehicle'] || ''
+          typeVehicle: parameters['selectedTypeVehicle'] || '',
+          groupVehicle:parameters['selectedGroupVehicle'] || ''
         },
         user: this.services.SessionData().userSalesforce,
         password: this.services.SessionData().passwordSalesForce,
@@ -378,6 +656,7 @@ async GenerateRaw(){
       };
 
       this.tools.loading('Generando reporte','Consultando ...');
+      console.log('Parametros de transaccion:', transactionParameters);
       const dataresponse: resultRegister = await firstValueFrom(
         this.services.GetPostTransactions(transactionParameters)
       );
@@ -390,7 +669,8 @@ async GenerateRaw(){
         const formatData = rows.map((record:transaction) =>({
           ...record,
           tsDateRefuel: moment(record.tsDateRefuel).tz('America/Guatemala').format('YYYY-MM-DD HH:mm'),
-          tsHourometer: parseFloat(Number(record.tsHourometer).toFixed(1))
+          tsHourometer: parseFloat(Number(record.tsHourometer).toFixed(1)),
+          tsQuantity:parseFloat(Number(record.tsQuantity).toFixed(1))
         }));
       //console.log('Datos reporte:', rows);
 
@@ -402,7 +682,6 @@ async GenerateRaw(){
       this.table?.redraw(true);   
       this.tools.close();
 };
-
 
 async ResumeData(){
 
@@ -417,7 +696,8 @@ async ResumeData(){
           endDate: moment(Enddate).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
           tankId: parameters['selectedDispenser'] || '',
           vehicleId: parameters['selectedVehicle'] || '',
-          typeVehicle: parameters['selectedTypeVehicle'] || ''
+          typeVehicle: parameters['selectedTypeVehicle'] || '',
+          groupVehicle:parameters['selectedGroupVehicle'] || ''
         },
         user: this.services.SessionData().userSalesforce,
         password: this.services.SessionData().passwordSalesForce,
@@ -425,6 +705,8 @@ async ResumeData(){
         group: parameters['GroupTransactions'] || false,
         excludedFilling: false
       };
+
+        const summaryDriver:boolean = parameters['GroupDriver'];
 
       this.tools.loading('Generando reporte','Consultando ...');
        const dataresponse: resultRegister = await firstValueFrom(
@@ -444,7 +726,9 @@ async ResumeData(){
           HRS:parseFloat(Number(record.HRS).toFixed(2))
         }));
 
-        const resume = summaryData(formatData,["tsveVehicleID","tsveTypeVehicle"],
+        const distinct = summaryDriver === true ? 'tsdvDriverName' : 'tsveVehicleID'
+
+        const resume = summaryData(formatData,[distinct,"tsveTypeVehicle"],
           [{field:'tsQuantity',operation:'sum'},
             {field:'KM',operation:'sum'},
             {field:'HRS',operation:'sum'},
@@ -466,7 +750,24 @@ async ResumeData(){
           const seriesQuantity = createChartSerie<any>(resumeData,'tsQuantity_sum','Cantidad','column');
           const seriesEficienci = createChartSerie<any>(resumeData,'eficiency_avg','Eficiencia','line');
           const dataSeriesChart:ApexAxisChartSeries = [seriesQuantity,seriesEficienci];
-          const categories = createChartCategories(resumeData,'tsveVehicleID');
+          const categories = createChartCategories(resumeData,distinct);
+
+          if(summaryDriver === true){
+            this.columnsReport.update(colums =>[
+              {
+                ...colums[0],
+                title:"Conductor",
+                field:"tsdvDriverName",
+                minWidth: 150,headerFilter: 'input'
+              },
+              ...colums.slice(1)
+            ])
+          }else if(summaryDriver === false){
+            this.columnsReport.update(colums =>[
+              { title: 'Vehículo', field: 'tsveVehicleID', minWidth: 150,headerFilter: 'input' },
+              ...colums.slice(1)
+            ])
+          }
 
 
 this.chartconfig.update( config =>({
@@ -493,6 +794,72 @@ this.table?.redraw(true);
 
 }
 
+async LevelData(){
+ 
+  this.tools.loading('Generando reporte','Consultando ...');
 
+  try {
+  const parameters = this.getToolbarValues();
+
+      const Startdate = this.tools.formatDate(parameters['StartDate']) + ' ' + '00:00';
+      const Enddate = this.tools.formatDate(parameters['EndDate']) + ' ' + '23:59';
+      
+      const measureParameters: RequestMeasure = {
+
+        tosend:{
+           startDate: moment(Startdate).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          endDate: moment(Enddate).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          tankId: parameters['selectedDispenser'] || '',
+        },
+       user: this.services.SessionData().userSalesforce,
+        password: this.services.SessionData().passwordSalesForce,
+        company: this.services.SessionData().company,
+      }
+     
+       const response = await firstValueFrom(
+      this.services.GetPostMeasure(measureParameters)
+    );
+      
+        const rows:any[] = Array.isArray(response.data) ? response.data : [];
+        const formatdata = rows.map((record:MeasureData)=>({
+         ... record,
+         tsDateMeasure:moment(record.tsDateMeasure)
+            .tz('America/Guatemala')
+            .format('YYYY-MM-DD HH:mm')
+        }));
+
+            const SeriesData:any = formatdata.map((record:MeasureData) => {
+        
+              return {
+                date: record.tsDateMeasure,
+                value:record.tsQuantity
+              }
+            });
+        
+            console.log(SeriesData);
+            const MeasureDateSeries = createChartCategories(formatdata,'tsDateMeasure');
+          
+            const DataLevel = createChartSerie(formatdata,'tsQuantity','Volumen','area');
+        
+             const SeriesLevel = [DataLevel];
+
+     this.chartconfig.update(current =>({
+       ... current,
+       series:SeriesLevel,
+       title:{
+        text:`Sensor: ${measureParameters.tosend.tankId}`,
+        align:'center'
+       },
+       xaxis:{
+        categories:MeasureDateSeries
+       }
+     }))
+     this.tools.close(); 
+  } catch (error) {
+    this.tools.close();
+     this.tools.error('Error de servidor','Verifique la conexion ...');
+  }
+
+}
 
 }

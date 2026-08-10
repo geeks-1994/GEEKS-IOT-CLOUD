@@ -1083,4 +1083,285 @@
 }
 
 
-/// aqui van los detalles de la flota.
+/// aqui van los detalles de la flota
+/// 
+/* =========================================================
+   SECCIÓN DE FLOTA
+   ========================================================= */
+
+.fleet-section {
+  padding: 22px;
+  background: #f8fafc;
+  border: 1px solid #e6ebf1;
+  border-radius: 20px;
+}
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.fleet-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.fleet-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+}
+
+.fleet-section-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  font-size: 1.25rem;
+}
+
+.fleet-section-title {
+  margin: 0;
+  color: #172033;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.fleet-section-description {
+  margin: 4px 0 0;
+  color: #7c8798;
+  font-size: 0.86rem;
+}
+
+.fleet-section-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 7px 11px;
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #d1fae5;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.fleet-status-dot {
+  width: 7px;
+  height: 7px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+}
+
+/* =========================================================
+   FRANJA INFORMATIVA
+   ========================================================= */
+
+.fleet-summary-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 13px 15px;
+  color: #475569;
+  background: linear-gradient(
+    135deg,
+    #eff6ff 0%,
+    #f8fafc 100%
+  );
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+
+  > div:last-child {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  strong {
+    color: #1e3a5f;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  span {
+    margin-top: 2px;
+    color: #64748b;
+    font-size: 0.76rem;
+  }
+}
+
+.fleet-summary-banner-icon {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  color: #2563eb;
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+/* =========================================================
+   CONTENEDOR DEL DASHBOARD
+   ========================================================= */
+
+.fleet-dashboard-card {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e3e9ef;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.055);
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+
+  &:hover {
+    border-color: #d7e0e8;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.085);
+  }
+}
+
+.fleet-dashboard-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px 20px;
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #f7faff 100%
+  );
+  border-bottom: 1px solid #e8eef3;
+}
+
+.fleet-dashboard-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #94a3b8;
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.fleet-dashboard-title {
+  margin: 0;
+  color: #172033;
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.fleet-dashboard-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  color: #2563eb;
+  background: #dbeafe;
+  border-radius: 12px;
+  font-size: 1.05rem;
+}
+
+.fleet-dashboard-card-body {
+  padding: 20px;
+  background: #ffffff;
+
+  app-fleet-dashboard {
+    display: block;
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .fleet-section {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .fleet-section-header {
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .fleet-section-description {
+    max-width: 260px;
+  }
+
+  .fleet-section-status {
+    padding: 6px 9px;
+    font-size: 0.67rem;
+  }
+
+  .fleet-summary-banner {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .fleet-dashboard-card-header {
+    padding: 15px 16px;
+  }
+
+  .fleet-dashboard-card-body {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 520px) {
+  .fleet-section-header {
+    flex-direction: column;
+  }
+
+  .fleet-section-status {
+    align-self: flex-start;
+  }
+
+  .fleet-section-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+  }
+
+  .fleet-summary-banner span {
+    line-height: 1.4;
+  }
+
+  .fleet-dashboard-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+
+.dynamic-chart-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .mdc-dialog__surface {
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 22px 60px rgba(15, 23, 42, 0.22);
+  }
+}

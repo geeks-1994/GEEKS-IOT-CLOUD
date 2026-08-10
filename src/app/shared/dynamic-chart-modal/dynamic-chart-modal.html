@@ -1,0 +1,32 @@
+<div class="chart-modal">
+
+  <div class="chart-modal-header">
+    <div>
+      <h2 class="chart-modal-title">
+        {{ data.title || 'Gráfico' }}
+      </h2>
+
+      @if (data.description) {
+        <p class="chart-modal-description">
+          {{ data.description }}
+        </p>
+      }
+    </div>
+
+    <button
+      type="button"
+      class="close-button"
+      aria-label="Cerrar"
+      (click)="close()"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="chart-modal-body">
+    <app-dynamic-chart
+      [config]="data.chartConfig"
+    />
+  </div>
+
+</div>

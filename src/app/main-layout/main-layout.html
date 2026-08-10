@@ -83,7 +83,28 @@
 
         </div>
 
+
+
       </div>
+
+        <!-- Cerrar sesión -->
+  <div class="sidebar-logout">
+
+    <button
+      type="button"
+      class="sidebar-item sidebar-button logout-button"
+      (click)="logOut()"
+      title="Cerrar sesión">
+
+      <i class="bi bi-box-arrow-right"></i>
+
+      <span *ngIf="!sidebarCollapsed">
+        Cerrar sesión
+      </span>
+
+    </button>
+
+  </div>
 
     </nav>
 

@@ -1,0 +1,461 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+   ========================================================= */
+
+.report-toolbar-body {
+  position: relative;
+  width: 100%;
+  padding: 20px 22px;
+  background: #ffffff;
+  border: 1px solid #dfe6ee;
+  border-radius: 16px;
+  box-shadow:
+    0 8px 22px rgba(15, 23, 42, 0.05),
+    0 2px 6px rgba(15, 23, 42, 0.03);
+  overflow: hidden;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.report-toolbar-body:hover {
+  border-color: #d3dce6;
+  box-shadow:
+    0 10px 26px rgba(15, 23, 42, 0.07),
+    0 3px 8px rgba(15, 23, 42, 0.04);
+}
+
+/* Línea decorativa superior */
+.report-toolbar-body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  height: 3px;
+  background: #3b82f6;
+  border-radius: 0 0 4px 4px;
+}
+
+/* =========================================================
+   FILA PRINCIPAL
+   ========================================================= */
+
+.report-toolbar-body > .row {
+  min-height: 56px;
+}
+
+.report-toolbar-body .row > div {
+  display: flex;
+  align-items: flex-end;
+}
+
+/* =========================================================
+   CAMPOS ANGULAR MATERIAL
+   ========================================================= */
+
+.toolbar-field {
+  width: 100%;
+  margin: 0;
+}
+
+:host ::ng-deep .toolbar-field .mat-mdc-text-field-wrapper {
+  min-height: 52px;
+  background: #ffffff;
+  border-radius: 11px;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+:host ::ng-deep .toolbar-field:hover .mat-mdc-text-field-wrapper {
+  background: #fbfcfe;
+}
+
+:host ::ng-deep .toolbar-field.mat-focused .mat-mdc-text-field-wrapper {
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+:host ::ng-deep .toolbar-field .mat-mdc-form-field-flex {
+  min-height: 52px;
+  align-items: center;
+}
+
+:host ::ng-deep .toolbar-field .mat-mdc-form-field-infix {
+  min-height: 52px;
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
+:host ::ng-deep .toolbar-field .mdc-notched-outline__leading {
+  border-radius: 11px 0 0 11px;
+}
+
+:host ::ng-deep .toolbar-field .mdc-notched-outline__trailing {
+  border-radius: 0 11px 11px 0;
+}
+
+:host ::ng-deep .toolbar-field .mdc-notched-outline__leading,
+:host ::ng-deep .toolbar-field .mdc-notched-outline__notch,
+:host ::ng-deep .toolbar-field .mdc-notched-outline__trailing {
+  border-color: #aeb9c7;
+  transition:
+    border-color 0.2s ease,
+    border-width 0.2s ease;
+}
+
+:host ::ng-deep .toolbar-field:hover .mdc-notched-outline__leading,
+:host ::ng-deep .toolbar-field:hover .mdc-notched-outline__notch,
+:host ::ng-deep .toolbar-field:hover .mdc-notched-outline__trailing {
+  border-color: #7f8da0;
+}
+
+:host ::ng-deep .toolbar-field.mat-focused .mdc-notched-outline__leading,
+:host ::ng-deep .toolbar-field.mat-focused .mdc-notched-outline__notch,
+:host ::ng-deep .toolbar-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #2563eb;
+  border-width: 1.5px;
+}
+
+:host ::ng-deep .toolbar-field .mat-mdc-floating-label {
+  color: #64748b;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+:host ::ng-deep .toolbar-field.mat-focused .mat-mdc-floating-label {
+  color: #2563eb;
+}
+
+:host ::ng-deep .toolbar-field input {
+  color: #253247;
+  font-size: 0.91rem;
+  font-weight: 500;
+}
+
+:host ::ng-deep .toolbar-field .mat-mdc-select-value {
+  color: #253247;
+  font-size: 0.91rem;
+  font-weight: 500;
+}
+
+:host ::ng-deep .toolbar-field .mat-mdc-select-arrow {
+  color: #64748b;
+}
+
+:host ::ng-deep .toolbar-field .mat-datepicker-toggle {
+  color: #64748b;
+}
+
+:host ::ng-deep .toolbar-field .mat-mdc-icon-button {
+  width: 38px;
+  height: 38px;
+  padding: 7px;
+}
+
+/* Elimina el espacio inferior reservado para errores y ayudas */
+:host ::ng-deep .toolbar-field .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+/* =========================================================
+   CAMPOS DESHABILITADOS
+   ========================================================= */
+
+:host
+  ::ng-deep
+  .toolbar-field.mat-form-field-disabled
+  .mat-mdc-text-field-wrapper {
+  background: #f1f5f9;
+  opacity: 0.8;
+}
+
+:host
+  ::ng-deep
+  .toolbar-field.mat-form-field-disabled
+  .mdc-notched-outline__leading,
+:host
+  ::ng-deep
+  .toolbar-field.mat-form-field-disabled
+  .mdc-notched-outline__notch,
+:host
+  ::ng-deep
+  .toolbar-field.mat-form-field-disabled
+  .mdc-notched-outline__trailing {
+  border-color: #d7dee7;
+}
+
+:host ::ng-deep .toolbar-field.mat-form-field-disabled input,
+:host
+  ::ng-deep
+  .toolbar-field.mat-form-field-disabled
+  .mat-mdc-select-value {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   CHECKBOX
+   ========================================================= */
+
+.toolbar-check-wrapper {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 14px;
+  background: #ffffff;
+  border: 1px solid #aeb9c7;
+  border-radius: 11px;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.toolbar-check-wrapper:hover {
+  background: #fbfcfe;
+  border-color: #7f8da0;
+}
+
+.toolbar-check-wrapper:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+:host ::ng-deep .toolbar-check-wrapper .mat-mdc-checkbox {
+  width: 100%;
+}
+
+:host ::ng-deep .toolbar-check-wrapper .mdc-form-field {
+  width: 100%;
+}
+
+:host ::ng-deep .toolbar-check-wrapper .mdc-label {
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+:host
+  ::ng-deep
+  .toolbar-check-wrapper
+  .mat-mdc-checkbox-checked
+  .mdc-checkbox__background {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+/* =========================================================
+   ACCIONES BOOTSTRAP
+   ========================================================= */
+
+.toolbar-actions-column {
+  display: flex;
+  align-items: flex-end;
+}
+
+.toolbar-actions {
+  min-height: 52px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.toolbar-action-btn {
+  min-width: 116px;
+  height: 46px;
+  padding: 0 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-radius: 10px;
+  font-size: 0.87rem;
+  font-weight: 600;
+  line-height: 1;
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.toolbar-action-btn i {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* Botón principal */
+.toolbar-action-btn.btn-primary {
+  color: #ffffff;
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.2);
+}
+
+.toolbar-action-btn.btn-primary:hover {
+  color: #ffffff;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 7px 16px rgba(37, 99, 235, 0.27);
+}
+
+.toolbar-action-btn.btn-primary:focus {
+  color: #ffffff;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.toolbar-action-btn.btn-primary:active {
+  color: #ffffff;
+  background: #1e40af;
+  border-color: #1e40af;
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Botón secundario */
+.toolbar-action-btn.btn-outline-secondary {
+  color: #475569;
+  background: #ffffff;
+  border-color: #b6c0cd;
+  box-shadow: none;
+}
+
+.toolbar-action-btn.btn-outline-secondary:hover {
+  color: #1e293b;
+  background: #f8fafc;
+  border-color: #8795a7;
+  transform: translateY(-1px);
+}
+
+.toolbar-action-btn.btn-outline-secondary:focus {
+  color: #1e293b;
+  background: #ffffff;
+  border-color: #64748b;
+  box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.14);
+}
+
+.toolbar-action-btn.btn-outline-secondary:active {
+  color: #1e293b;
+  background: #e9eef4;
+  border-color: #64748b;
+  transform: translateY(0);
+}
+
+/* Estado deshabilitado */
+.toolbar-action-btn:disabled,
+.toolbar-action-btn.disabled {
+  opacity: 0.55;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+/* =========================================================
+   SELECT Y AUTOCOMPLETE
+   ========================================================= */
+
+:host ::ng-deep .mat-mdc-autocomplete-panel,
+:host ::ng-deep .mat-mdc-select-panel {
+  padding: 6px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14);
+}
+
+:host ::ng-deep .mat-mdc-option {
+  min-height: 42px;
+  margin: 2px 0;
+  border-radius: 8px;
+  color: #334155;
+  font-size: 0.88rem;
+}
+
+:host ::ng-deep .mat-mdc-option:hover {
+  background: #f1f5f9;
+}
+
+:host ::ng-deep .mat-mdc-option.mdc-list-item--selected {
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+:host ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+  font-size: 0.88rem;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1199.98px) {
+  .report-toolbar-body {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .report-toolbar-body {
+    padding: 20px;
+  }
+
+  .toolbar-actions-column {
+    width: 100%;
+    padding-top: 14px;
+    margin-top: 2px;
+    border-top: 1px solid #e9edf3;
+  }
+
+  .toolbar-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .report-toolbar-body {
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+
+  .report-toolbar-body::before {
+    left: 14px;
+    right: 14px;
+  }
+
+  .toolbar-actions-column {
+    padding-top: 14px;
+  }
+
+  .toolbar-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-action-btn {
+    width: 100%;
+    height: 44px;
+  }
+
+  .toolbar-check-wrapper {
+    min-height: 50px;
+  }
+
+  :host ::ng-deep .toolbar-field .mat-mdc-text-field-wrapper,
+  :host ::ng-deep .toolbar-field .mat-mdc-form-field-flex,
+  :host ::ng-deep .toolbar-field .mat-mdc-form-field-infix {
+    min-height: 50px;
+  }
+}

@@ -1,0 +1,608 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.preregister-page {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.preregister-card {
+  width: 100%;
+  max-width: 620px;
+  padding: 38px;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(15, 53, 78, 0.98),
+      rgba(6, 31, 50, 0.99)
+    );
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  margin-bottom: 32px;
+}
+
+
+.header-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #16a7e0,
+      #0873ad
+    );
+
+  box-shadow:
+    0 10px 30px rgba(0, 157, 220, 0.22);
+
+  color: white;
+
+  font-size: 1.55rem;
+}
+
+
+.form-header h2 {
+  margin: 0 0 5px;
+
+  color: #ffffff;
+
+  font-size: 1.55rem;
+  font-weight: 700;
+}
+
+
+.form-header p {
+  margin: 0;
+
+  color: #93a9b9;
+
+  font-size: 0.9rem;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #dbe8f0;
+
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.input-container {
+  position: relative;
+}
+
+
+.form-control {
+  width: 100%;
+
+  min-height: 52px;
+
+  padding:
+    0 48px;
+
+  color: #ffffff;
+
+  background:
+    rgba(3, 19, 31, 0.72);
+
+  border:
+    1px solid rgba(160, 190, 210, 0.2);
+
+  border-radius: 12px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.form-control::placeholder {
+  color: #6f8999;
+}
+
+
+.form-control:focus {
+  background:
+    rgba(3, 19, 31, 0.9);
+
+  border-color:
+    #18aee8;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(24, 174, 232, 0.12);
+}
+
+
+.input-icon {
+  position: absolute;
+
+  left: 17px;
+  top: 50%;
+
+  transform:
+    translateY(-50%);
+
+  color: #6ea4c3;
+
+  z-index: 2;
+}
+
+
+/* =========================================================
+   TOKEN
+========================================================= */
+
+.input-action {
+  display: grid;
+
+  grid-template-columns:
+    1fr auto;
+
+  gap: 10px;
+}
+
+
+.btn-token {
+  min-width: 115px;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 0 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  color: #ffffff;
+
+  font-weight: 600;
+
+  background:
+    linear-gradient(
+      135deg,
+      #139fd8,
+      #0874af
+    );
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.btn-token:hover:not(:disabled) {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 8px 20px
+    rgba(15, 159, 216, 0.24);
+}
+
+
+.btn-token:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   READ ONLY
+========================================================= */
+
+.readonly-input .form-control {
+  color: #90a6b5;
+
+  background:
+    rgba(255, 255, 255, 0.035);
+}
+
+
+/* =========================================================
+   PASSWORD
+========================================================= */
+
+.password-input {
+  padding-right: 52px;
+}
+
+
+.password-toggle {
+  position: absolute;
+
+  right: 7px;
+  top: 50%;
+
+  transform:
+    translateY(-50%);
+
+  width: 38px;
+  height: 38px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  background:
+    transparent;
+
+  color: #91a8b8;
+
+  font-size: 1.1rem;
+}
+
+
+.password-toggle:hover:not(:disabled) {
+  color: #ffffff;
+
+  background:
+    rgba(255, 255, 255, 0.06);
+}
+
+
+.password-container.disabled {
+  opacity: 0.5;
+}
+
+
+/* =========================================================
+   HELPER
+========================================================= */
+
+.helper-text {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #7891a2;
+
+  font-size: 0.77rem;
+}
+
+
+/* =========================================================
+   TOKEN SUCCESS
+========================================================= */
+
+.token-success {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin:
+    -4px 0 20px;
+
+  padding:
+    11px 14px;
+
+  border-radius: 10px;
+
+  color: #52d99b;
+
+  background:
+    rgba(30, 190, 120, 0.08);
+
+  border:
+    1px solid
+    rgba(30, 190, 120, 0.16);
+
+  font-size: 0.84rem;
+}
+
+
+/* =========================================================
+   PASSWORD STRENGTH
+========================================================= */
+
+.password-strength {
+  margin:
+    -7px 0 25px;
+}
+
+
+.strength-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 8px;
+
+  color: #8ea5b5;
+
+  font-size: 0.78rem;
+}
+
+
+.strength-label {
+  font-weight: 600;
+}
+
+
+.strength-label.weak {
+  color: #ff6262;
+}
+
+
+.strength-label.medium {
+  color: #f6b84a;
+}
+
+
+.strength-label.strong {
+  color: #37d495;
+}
+
+
+.strength-bars {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 6px;
+}
+
+
+.strength-bars span {
+  height: 5px;
+
+  border-radius: 10px;
+
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+
+.strength-bars span.active.weak {
+  background: #ff6262;
+}
+
+
+.strength-bars span.active.medium {
+  background: #f6b84a;
+}
+
+
+.strength-bars span.active.strong {
+  background: #37d495;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+.save-btn {
+  width: 100%;
+
+  min-height: 54px;
+
+  margin-top: 8px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  color: #ffffff;
+
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0ca5df,
+      #08689d
+    );
+
+  box-shadow:
+    0 10px 30px
+    rgba(0, 151, 214, 0.18);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.save-btn:hover:not(:disabled) {
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 14px 32px
+    rgba(0, 151, 214, 0.28);
+}
+
+
+.save-btn:disabled {
+  opacity: 0.42;
+
+  cursor: not-allowed;
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .preregister-page {
+    padding: 16px;
+  }
+
+  .preregister-card {
+    padding: 25px 20px;
+  }
+
+  .form-header {
+    align-items: flex-start;
+  }
+
+  .input-action {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-token {
+    min-height: 48px;
+  }
+
+}
+
+
+//boton cerrar
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.dialog-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.close-btn {
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: #cfe7f4;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.close-btn i {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  background: rgba(24, 174, 232, 0.16);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+}
+
+.close-btn:active {
+  transform: scale(0.96);
+}
+
+// logo
+
+// .header-icon {
+//   width: 360px;
+//   height: 360px;
+
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+
+//   flex-shrink: 0;
+
+//   background: transparent;
+
+//   border-radius: 16px;
+// }
+
+// .hackoon-icon {
+//   width: 320px;
+//   height: 320px;
+
+//   object-fit: contain;
+
+//   filter:
+//     drop-shadow(
+//       0 8px 14px rgba(0, 0, 0, 0.25)
+//     );
+// }
+
+
+/// header icon

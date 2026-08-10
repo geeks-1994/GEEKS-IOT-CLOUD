@@ -414,6 +414,38 @@
 
                   </div>
 
+                                    <div class="tank-info-item">
+
+                    <div class="tank-info-icon capacity">
+                      <i class="bi bi-calendar"></i>
+                    </div>
+
+                    <div class="tank-info-content">
+                      <span>Ultima actividad:</span>
+
+                      <strong>
+                        {{ item.DateMeasured || '' }}
+                      </strong>
+                    </div>
+
+                  </div>
+
+                             <div class="tank-info-item">
+
+                    <!-- <div class="tank-info-icon capacity">
+                  <i class="bi bi-bar-chart-line"></i>
+                    </div> -->
+
+<button
+  type="button"
+  class="btn btn-outline-primary"
+  (click)="LevelData(item.tankId,item.title)"
+>
+  <i class="bi bi-arrows-fullscreen me-2"></i>
+  Grafico
+</button>
+
+                  </div>
                   <!-- <div class="tank-info-item">
 
                     <div class="tank-info-icon percentage">
@@ -467,10 +499,54 @@
       }
 
       @case ('fleet') {
-        <div class="content-card">
-          <h5>Estado de la flota</h5>
-          <p>Aquí puedes mostrar vehículos activos, detenidos o en mantenimiento.</p>
-        </div>
+<section class="fleet-section">
+
+  <!-- FRANJA INFORMATIVA -->
+  <div class="fleet-summary-banner">
+
+<app-tool-bar
+
+   [toolbarComponents]="toolbarFleet()"
+  (valuesChange)="onToolbarValuesChange($event)"
+  (execute)="generateReport($event)"
+  (cleared)="onToolbarCleared()">
+
+</app-tool-bar>
+
+  </div>
+
+  <!-- COMPONENTE PRINCIPAL -->
+  <div class="fleet-dashboard-card">
+
+    <div class="fleet-dashboard-card-header">
+
+      <div>
+        <span class="fleet-dashboard-label">
+          Panel de control
+        </span>
+
+        <h6 class="fleet-dashboard-title">
+          Actividad general de vehículos
+        </h6>
+      </div>
+
+      <div class="fleet-dashboard-icon">
+        <i class="bi bi-speedometer2"></i>
+      </div>
+
+    </div>
+
+    <div class="fleet-dashboard-card-body">
+
+      <app-fleet-dashboard
+        [config]="FleetDasboard()">
+      </app-fleet-dashboard>
+
+    </div>
+
+  </div>
+
+</section>
       }
 
       @case ('alerts') {

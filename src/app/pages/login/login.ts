@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Tools } from '../../services/tools';
 import { GsuiteLoginResponse } from '../../models/generals-interfaces';
+import {PreRegister} from '../../shared/pre-register/pre-register'
+import {MatDialog} from '@angular/material/dialog'
+
 
 @Component({
   selector: 'app-login',
@@ -15,10 +18,11 @@ import { GsuiteLoginResponse } from '../../models/generals-interfaces';
 })
 export class Login implements OnInit {
   
-user:string = 'lpradodmc@geeks-iot-cloud.com';
+user:string = '';
 password:string = '';
+showPassword = false;
 
-  constructor(private service: Methods,private alerts: Tools, public router:Router) { }
+  constructor(private service: Methods,private alerts: Tools, public router:Router,private dialog:MatDialog) { }
 
 
 
@@ -59,6 +63,36 @@ next: async (response:GsuiteLoginResponse) => {
 }
 
 });
+
+};
+
+
+
+togglePassword(): void {
+  this.showPassword = !this.showPassword;
+}
+
+
+openRegisteruser():void{
+
+  try {
+      const dialogRef =
+    this.dialog.open(
+      PreRegister,
+      {
+      width: '620px',
+    maxWidth: '95vw',
+    maxHeight: '90vh',
+    disableClose: true,
+    autoFocus: false,
+    panelClass: 'register-user-dialog',
+    backdropClass: 'register-user-backdrop'
+      }
+    );
+    
+  } catch (error) {
+    this.alerts.toast('error en el servidor','error','top')
+  }
 
 }
 

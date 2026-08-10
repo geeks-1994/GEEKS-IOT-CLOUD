@@ -1,73 +1,160 @@
-<div class="container-fluid">
+<div class="container-fluid fleet-dashboard">
 
   <!-- Header -->
   <div class="row mb-4">
+
     <div class="col-12">
-      <h4 class="fw-bold mb-0">
-        Detalle de Flota
-      </h4>
+
+      <div class="dashboard-header">
+
+        <div>
+          <h3 class="dashboard-title">
+            Detalle de Flota
+          </h3>
+
+          <p class="dashboard-subtitle mb-0">
+            Indicadores de eficiencia y auditoría de las transacciones.
+          </p>
+        </div>
+
+      </div>
+
     </div>
+
   </div>
 
   <!-- Primera fila -->
-  <div class="row g-3 mb-3">
+  <div class="row g-4 mb-4">
 
-    <!-- Gráfico superior -->
+    <!-- Gráfico -->
     <div class="col-12 col-xl-6">
-      <div class="card shadow-sm h-100">
 
-        <div class="card-header">
-          <strong>Km / Km por Galón</strong>
+      <div class="dashboard-card h-100"
+      [class.expanded]="isExpanded('chart1')"
+    [class.hidden]="expandedPanel() && !isExpanded('chart1')">
+
+        <div class="dashboard-card-header">
+
+          <div>
+            <h5>Detalle de Eficiencia</h5>
+            <small>Km recorridos vs rendimiento</small>
+          </div>
+
+
+        <div class="card-actions">
+
+            <button
+                class="btn btn-light btn-sm"
+                (click)="togglePanel('chart1')">
+
+                <i
+                    class="bi"
+                    [ngClass]="isExpanded('chart1')
+                    ? 'bi-fullscreen-exit'
+                    : 'bi-arrows-fullscreen'">
+                </i>
+
+            </button>
+
         </div>
 
-        <div class="card-body">
+        </div>
 
-          <!-- Aquí irá el gráfico -->
-          <div id="chartKmGal" style="height:320px;"></div>
+        <div class="dashboard-card-body">
+
+          <app-dynamic-chart
+            [config]="config().chartDataEficiency">
+          </app-dynamic-chart>
 
         </div>
 
       </div>
+
     </div>
 
-    <!-- Audit Log -->
+    <!-- Audit -->
     <div class="col-12 col-xl-6">
-      <div class="card shadow-sm h-100">
 
-        <div class="card-header">
-          <strong>Audit Log</strong>
+      <div class="dashboard-card h-100"
+       [class.expanded]="isExpanded('table')"
+    [class.hidden]="expandedPanel() && !isExpanded('table')">
+
+        <div class="dashboard-card-header">
+
+          <div>
+            <h5>Audit Log</h5>
+            <small>Últimas transacciones procesadas</small>
+          </div>
+
+
+<button
+    class="btn btn-light btn-sm"
+    (click)="togglePanel('table')">
+
+    <i
+        class="bi"
+        [ngClass]="isExpanded('table')
+        ? 'bi-fullscreen-exit'
+        : 'bi-arrows-fullscreen'">
+    </i>
+
+</button>
         </div>
 
-        <div class="card-body">
+        <div class="dashboard-card-body">
 
-          <!-- Tabulator -->
-          <div #auditTable></div>
+          <div #tabulatorTable class="tabulator-container"></div>
 
         </div>
 
       </div>
+
     </div>
 
   </div>
 
   <!-- Segunda fila -->
+
   <div class="row">
 
     <div class="col-12">
-      <div class="card shadow-sm">
 
-        <div class="card-header">
-          <strong>Resumen General</strong>
+      <div class="dashboard-card"
+      [class.expanded]="isExpanded('summary')"
+    [class.hidden]="expandedPanel() && !isExpanded('summary')">
+
+        <div class="dashboard-card-header">
+
+          <div>
+            <h5>Resumen General</h5>
+            <small>Comparativo por vehículo</small>
+          </div>
+
+
+      <button
+    class="btn btn-light btn-sm"
+    (click)="togglePanel('summary')">
+
+    <i
+        class="bi"
+        [ngClass]="isExpanded('summary')
+        ? 'bi-fullscreen-exit'
+        : 'bi-arrows-fullscreen'">
+    </i>
+
+</button>
         </div>
 
-        <div class="card-body">
+        <div class="dashboard-card-body">
 
-          <!-- Segundo gráfico -->
-          <div id="chartResume" style="height:350px;"></div>
+          <app-dynamic-chart
+            [config]="config().chartDataFleet">
+          </app-dynamic-chart>
 
         </div>
 
       </div>
+
     </div>
 
   </div>
