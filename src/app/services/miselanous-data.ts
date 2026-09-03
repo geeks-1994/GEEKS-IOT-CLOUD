@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Methods } from './methods';
-import { GroupVehicles, Miselanuos, ParametersCatalogue, TankCatalogue, Vehicle, VehicleBrandCatalogue } from '../models/generals-interfaces';
+import { GroupVehicles, Miselanuos, ParametersCatalogue, ProductCatalogue, TankCatalogue, Vehicle, VehicleBrandCatalogue } from '../models/generals-interfaces';
 import { firstValueFrom } from 'rxjs';
 
 
@@ -13,6 +13,7 @@ export class MiselanousData {
   public miselanousDataVehicle = signal<Miselanuos[]>([]);
   public miselanousDataVehicleBrand = signal<Miselanuos[]>([]);
   public MiselanousDataGroup = signal<Miselanuos[]>([]);
+  public MiselanousDataProduct = signal<Miselanuos[]>([]);
 
 constructor(public services: Methods) { }   
 
@@ -29,7 +30,8 @@ async loadDataMiselaous(): Promise<void> {
       responseTanks,
       responseVehicles,
       responseTypeVehicles,
-      responsiveGroup
+      responsiveGroup,
+      responsiveproduct
     ] = await Promise.all([
       firstValueFrom(
         this.services.GetPostDataCatalogue<TankCatalogue>({
@@ -56,29 +58,45 @@ async loadDataMiselaous(): Promise<void> {
           ...baseParameters,
           nameObject:'group'
         })
+      ),
+      firstValueFrom(
+        this.services.GetPostDataCatalogue<ProductCatalogue>({
+          ...baseParameters,
+          nameObject:'product'
+        })
       )
     ]);
 
     const tanksData: Miselanuos[] = responseTanks.map((tank) => ({
       label: tank.description,
-      value: tank.TankId
+      value: tank.TankId,
+      SFValue:tank.id
     }));
 
     const vehiclesData: Miselanuos[] = responseVehicles.map((vehicle) => ({
       label: vehicle.VehicleName,
-      value: vehicle.VehicleName
+      value: vehicle.VehicleName,
+      SFValue:vehicle.Id
     }));
 
     
     const vehicleBrandsData: Miselanuos[] = responseTypeVehicles.map((vehicleBrand) => ({
       label: vehicleBrand.Name,
-      value: vehicleBrand.Name
+      value: vehicleBrand.Name,
+      SFValue:vehicleBrand.id
     }));
 
 
     const vehiclesGroup:Miselanuos[] = responsiveGroup.map((group) => ({
       label:group.Name,
-      value:group.Name
+      value:group.Name,
+      SFValue:group.Id
+    }));
+
+    const Productdata:Miselanuos[] = responsiveproduct.map((product) =>({
+          label:product.Name,
+          value:product.Name,
+          SFValue:product.id
     }));
 
     
@@ -86,7 +104,8 @@ async loadDataMiselaous(): Promise<void> {
     this.miselanousDataVehicle.set(vehiclesData);
     this.miselanousDataVehicleBrand.set(vehicleBrandsData);
     this.MiselanousDataGroup.set(vehiclesGroup);
-
+    this.MiselanousDataProduct.set(Productdata);
+  // console.log(this.MiselanousDataProduct())
 
 /*  
     console.log('Tanques:', this.miselanousDataTank());

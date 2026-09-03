@@ -15,6 +15,11 @@ interface HelperMenu{
   description:string;
 };
 
+export interface Roles{
+  name:'CREATE'|'UPDATE'|'DELETE';
+  active:boolean;
+}
+
 
 export interface GsuiteUser {
   userId: string;
@@ -25,6 +30,8 @@ export interface GsuiteUser {
   passwordSalesForce: string;
   Catalogues:HelperMenu[];
   fleet:HelperMenu[];
+  RolesCatalogues?:Roles[];
+  RolesFleet?:Roles[];
   iat: number; // Fecha de emisión del token (timestamp)
   exp: number; // Fecha de expiración del token (timestamp)
 };
@@ -136,6 +143,10 @@ export interface SessionData{
       passwordSalesForce:string;
       company:string;
 };
+
+
+
+
 
 
 // src/app/models/vehicle.model.ts
@@ -261,7 +272,7 @@ export interface transaction {
   tsHourometer: number;
   tsDateCreated: string; // ISO Date String
   tsDateImported: string; // ISO Date String
-  tsTransactionType: number;
+  tsTransactionType: number | string;
   tsStateServer: boolean;
   tsdvDriverID: string;
   tsdvDriverCode: string;
@@ -300,6 +311,7 @@ export interface RequestPayload {
     vehicleId: string;
     typeVehicle: string;
     groupVehicle?:string;
+    onlyFuelIn?:boolean;
   };
   user: string;
   password: string;
@@ -333,6 +345,7 @@ export interface ResultMeasure {
 export interface Miselanuos{
   label:string;
   value:string;
+  SFValue?:string;
 }
 
 
@@ -341,12 +354,14 @@ export interface PumpDataDashboard {
   ppPumpID: string;
   ppPumpName: string;
   ppPumpSalesForceID: string;
-
+   
   // Detalle del tanque
   tkname: string;
   tkTankID: string;
   tktankDescription: string;
   tkTankSalesForceID: string;
+  tkdateCalibration: string;
+  tkcalibrationVolume:number;
   tkCapacity: number;
   tkVolume: number;
   tkpercent: number;

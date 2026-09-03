@@ -6,13 +6,28 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Methods } from '../../services/methods';
 import { Tools } from '../../services/tools';
-import { ParametersCatalogue } from '../../models/generals-interfaces';
+import { ParametersCatalogue, Roles } from '../../models/generals-interfaces';
+import { CatalogueFormModal } from '../../shared/catalogue-form-modal/catalogue-form-modal';
+
+import {
+  CatalogueFormConfig,
+  CatalogueFormMode
+} from '../../models/crud';
+
+import {getCatalogueFormConfig} from '../../configs/catalogue-form-field.config';
+import { MiselanousData } from '../../services/miselanous-data';
+import { CRUDServices } from '../../services/crud.services';
+
+
 
 type CatalogueName = 'Vehicles' | 'driver' | 'Tags' | 'Fleets';
 
 @Component({
   selector: 'app-fleetviewer',
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+  CatalogueFormModal
+  ],
   templateUrl: './fleetviewer.html',
   styleUrl: './fleetviewer.scss',
 })
@@ -22,7 +37,9 @@ export class Fleetviewer implements OnInit {
     private route: ActivatedRoute,
     private services: Methods,
     public tools: Tools,
-    public router: Router
+    public router: Router,
+    public CRUD: CRUDServices,
+    public miselanous:MiselanousData
   ) {
    effect(()=>{
 
@@ -40,9 +57,16 @@ this.route.paramMap
         this.currentPage.set(1);
 
         this.catalogueTitle.set(this.catalogueConfig[nameCatalogue].title);
+        this.verifyPermissions(this.services.FleetPermices())
+        ///console.warn(this.catalogueTitle());
+        this.catalogueName.set(nameCatalogue);
 
         this.getDataCatalogues(nameCatalogue);
-      });
+          this.miselanous.loadDataMiselaous();
+        
+
+      
+        });
 
    })
 
@@ -57,12 +81,21 @@ this.route.paramMap
   catalogueColumns = signal<string[]>([]);
   catalogueCaptions = signal<string[]>([]);
   catalogueTitle = signal<string>('Flota');
+  namecatalogue = signal<CatalogueName>('Fleets');
+
+  // permisos de roles
+  create = signal<boolean>(false);
+  update = signal<boolean>(false);
+  delete = signal<boolean>(false);
+
 
   currentPage = signal<number>(1);
   pageSize = signal<number>(10);
   searchText = signal<string>('');
 
   pageSizeOptions: number[] = [25, 50,100,200];
+
+
 
   // ==========================
   // CONFIGURACIÓN DE VISTAS
@@ -101,13 +134,15 @@ this.route.paramMap
         'Name',
         'firstName',
         'lastName',
-        'GroupName'
+        'GroupName',
+        'Active'
       ],
       captions: [
         'Codigo',
         'Nombre',
         'Apellido',
-        'Grupo'
+        'Grupo',
+        'Estado'
       ]
     },
 
@@ -144,6 +179,21 @@ this.route.paramMap
     }
   };
 
+
+
+formModalVisible = signal(false);
+
+formMode = signal<CatalogueFormMode>('create');
+
+formConfig = signal<CatalogueFormConfig | null>(null);
+
+selectedRecord = signal<Record<string, unknown> | null>(null);
+
+catalogueName = signal<CatalogueName>('Fleets');
+
+   readonly isVehicle = computed(
+    () => this.catalogueName() == 'Vehicles'
+   );
   // ==========================
   // INIT
   // ==========================
@@ -318,6 +368,180 @@ this.route.paramMap
     } finally {
       this.tools.close();
     }
+  };
+
+
+verifyPermissions(roles: Roles[] = []): void {
+  try {
+    const permissions = new Map(
+      roles.map(role => [
+        role.name?.toUpperCase(),
+        role.active === true
+      ])
+    );
+
+    this.create.set(
+      permissions.get('CREATE') ?? false
+    );
+
+    this.update.set(
+      permissions.get('UPDATE') ?? false
+    );
+
+    this.delete.set(
+      permissions.get('DELETE') ?? false
+    );
+
+  } catch (error) {
+    this.create.set(false);
+    this.update.set(false);
+    this.delete.set(false);
+
+    this.tools.error(
+      'Permisos',
+      'Verifique los permisos configurados'
+    );
   }
+}
+
+
+createRecord(): void {
+
+  console.log('Nuevo registro');
+ console.log(this.catalogueName());
+  const config = getCatalogueFormConfig(
+    this.catalogueName()
+  );
+
+  if(!config){
+
+    this.tools.info('Catalogo',`no existe en la configuracion este catalogo: ${this.catalogueName()}`);
+  return;
+  };
+
+  this.formMode.set('create');
+  this.formConfig.set(config);
+  this.selectedRecord.set(null);
+  this.formModalVisible.set(true);
+
+};
+
+
+editRecord(row: Record<string, any>,specialmethod:string = ''): void {
+
+  console.log('Editar registro:', row);
+  //console.log(this.catalogueName());
+  
+  let CatalogueOption = specialmethod == '' ? this.catalogueName() : specialmethod;
+
+
+  const config = getCatalogueFormConfig(
+CatalogueOption
+  );
+
+  if(!config){
+
+    this.tools.info('Catalogo',`no existe en la configuracion este catalogo: ${this.catalogueName()}`);
+  return;
+  };
+
+
+  this.formMode.set('update');
+  this.formConfig.set(config);
+  this.selectedRecord.set({...row});
+  this.formModalVisible.set(true);
+
+};
+
+async deleteRecord(row: Record<string, any>):Promise<void> {
+  console.log('Eliminar registro:', row);
+
+  try {
+    const stringInput = this.catalogueName() + 'delete';
+
+    if(this.CRUD.CRUDmethods[stringInput]){
+
+      const response = await this.tools.question('Eliminar',`Esta seguro de eliminar el registro ${row['Name'] || row['TagCode']} ?`);
+
+      if(response.isConfirmed){
+       
+            await this.CRUD.CRUDmethods[stringInput](row);
+              this.tools.toast('Item eliminado','success','center')
+              this.tools.playSound('/sounds/delete_ost.mp3');
+               await this.getDataCatalogues(this.catalogueName());
+      }
+
+    }else {
+       this.tools.info('Catalogo','este metodo aun no existe')
+
+    }
+    
+
+  } catch (error) {
+    this.tools.error('error','el catalogo no puede ser eliminado');
+  }
+
+
+};
+
+
+
+closeFormModal(): void {
+  this.formModalVisible.set(false);
+  this.selectedRecord.set(null);
+};
+
+
+async saveCatalogueRecord(
+  data: Record<string, unknown>
+):Promise<void> {
+
+     console.log(this.formMode());
+  if (this.formMode() === 'create') {
+      console.log('Datos para crear:', data);
+   // console.log(this.catalogueName());
+   
+    const stringInput:any = this.catalogueName() + 'create';
+
+    console.log(stringInput);
+     if(this.CRUD.CRUDmethods[stringInput]){
+      
+   await   this.CRUD.CRUDmethods[stringInput](data);
+      this.tools.info('Creacion','El usuario creo un nuevo item');
+      this.tools.playSound('/sounds/ost_1.mp3');
+await this.getDataCatalogues(this.catalogueName());
+     }
+
+
+
+this.closeFormModal();
+    return;
+  }
+
+  if(this.formMode() === 'update'){
+
+
+        const stringInput:any = this.catalogueName() + 'update';
+
+     if(this.CRUD.CRUDmethods[stringInput]){
+      
+    await  this.CRUD.CRUDmethods[stringInput](data);
+      this.tools.info('Actualizacion',`el registro ${data['Name'] || data['TagCode']} fue modificado...`);
+  this.tools.playSound('/sounds/ost_1.mp3');
+ await this.getDataCatalogues(this.catalogueName());
+     }else {
+
+      this.tools.toast('el metodo no existe','error','center');
+
+     }
+
+
+
+this.closeFormModal();
+    return;
+
+  }
+
+};
 
 }

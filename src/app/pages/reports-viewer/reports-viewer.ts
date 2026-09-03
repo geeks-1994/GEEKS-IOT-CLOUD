@@ -24,12 +24,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   MeasureData,
   Miselanuos,
+  ParametersCatalogue,
   ParametersReport,
+  PumpDataDashboard,
   ReportCatalogue,
   ReportName,
   RequestMeasure,
   RequestPayload,
   resultRegister,
+  TankCatalogue,
   transaction
 } from '../../models/generals-interfaces';
 
@@ -46,7 +49,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { MiselanousData } from '../../services/miselanous-data';
-import { ChartReport, createChartCategories, createChartSerie, DynamicChartConfig, EMPTY_CHART_CONFIG, summaryData } from '../../models/report-interfaces';
+import { ChartReport, createChartCategories, createChartSerie, DynamicChartConfig, EMPTY_CHART_CONFIG, generateMonthRange, getMonthKey, getMonthYear, MonthlyTankBalance, summaryData,roundQuantity } from '../../models/report-interfaces';
 import { DynamicChart } from '../dynamic-chart/dynamic-chart';
 import { ApexXAxis } from 'apexcharts';
 import { ApexAxisChartSeries } from 'ng-apexcharts';
@@ -262,7 +265,9 @@ loadReport(reportName: ReportName): void {
   this.toolbarComponents.set(
     enabledParameters
   );
-}
+};
+
+
 
   private async tryCreateOrUpdateTable(): Promise<void> {
     if (!this.isBrowser) return;
@@ -284,7 +289,8 @@ loadReport(reportName: ReportName): void {
     this.table.setColumns(columns);
     this.table.setData(this.reportData());
     this.table.redraw(true);
-  }
+  };
+
 
   private async createTable(): Promise<void> {
     if (!this.isBrowser) return;
@@ -328,7 +334,7 @@ loadReport(reportName: ReportName): void {
       default:
         return '';
     }
-  }
+  };
 
   updateParameterValue(parameterName: string, value: any): void {
     this.toolbarComponents.update(parameters =>
@@ -342,14 +348,16 @@ loadReport(reportName: ReportName): void {
         };
       })
     );
-  }
+  };
 
   getToolbarValues(): Record<string, any> {
     return this.toolbarComponents().reduce((acc, parameter) => {
       acc[parameter.name] = parameter.value;
       return acc;
     }, {} as Record<string, any>);
-  }
+  };
+
+
 
   async runReport(): Promise<void> {
     const report = this.selectedReport();
@@ -381,8 +389,13 @@ loadReport(reportName: ReportName): void {
 
       await this.LevelData();
 
+    } else if(report.name === 'Balance'){
+
+      await this.Balancedata()
     }
   
+    this.tools.playSound('/sounds/ost_0.mp3');
+
   }
 
   clearToolbar(): void {
@@ -690,8 +703,9 @@ async ResumeData(){
 
       const Startdate = this.tools.formatDate(parameters['StartDate']) + ' ' + '00:00';
       const Enddate = this.tools.formatDate(parameters['EndDate']) + ' ' + '23:59'; 
-            const transactionParameters: RequestPayload = {
-        tosend: {
+
+          const transactionParameters: RequestPayload = {
+          tosend: {
           startDate: moment(Startdate).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
           endDate: moment(Enddate).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
           tankId: parameters['selectedDispenser'] || '',
@@ -860,6 +874,324 @@ async LevelData(){
      this.tools.error('Error de servidor','Verifique la conexion ...');
   }
 
+};
+
+
+
+async Balancedata(){
+
+  try {
+  this.tools.loading('Consultando saldos ....','Cargando ....');
+
+   const parameters = this.getToolbarValues();
+  const Enddate = this.tools.formatDate(parameters['EndDate']) + ' ' + '23:59'; 
+  
+  const Inventory:ParametersCatalogue = {
+      nameObject:'Pumps',
+      user:this.services.SessionData().userSalesforce,
+      password:this.services.SessionData().passwordSalesForce,
+      company:this.services.SessionData().company
+    };
+
+
+    const responseCatalogue:PumpDataDashboard[] = await firstValueFrom(
+      this.services.GetPostDataCatalogue<PumpDataDashboard>(Inventory)
+    );
+
+    const data = responseCatalogue ?? [];
+
+
+    const inventoryToBalance = data.find( (x:PumpDataDashboard) => x.tkTankID  == parameters['selectedDispenser'] )
+     
+     // refuels tomar datos de salida
+
+               const transactionParameters: RequestPayload = {
+          tosend: {
+          startDate: moment(inventoryToBalance?.tkdateCalibration).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          endDate: moment(Enddate).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          tankId: parameters['selectedDispenser'] || '',
+          vehicleId: parameters['selectedVehicle'] || '',
+          typeVehicle: parameters['selectedTypeVehicle'] || '',
+          groupVehicle:parameters['selectedGroupVehicle'] || '',
+          onlyFuelIn:false
+        },
+        user: this.services.SessionData().userSalesforce,
+        password: this.services.SessionData().passwordSalesForce,
+        company: this.services.SessionData().company,
+        group: parameters['GroupTransactions'] || false,
+        excludedFilling: true
+      };
+
+
+   // Validación antes de consumir los servicios
+    if (!parameters['selectedDispenser']) {
+      this.tools.toast(
+        'Debes seleccionar un inventario',
+        'warning',
+        'top'
+      );
+      return;
+    }
+
+    if (!Enddate) {
+      this.tools.toast(
+        'Debes seleccionar una fecha final',
+        'warning',
+        'top'
+      );
+      return;
+    }
+
+const [RefuelsData,fuelIn] = await Promise.all([
+  firstValueFrom(
+        this.services.GetPostTransactions(transactionParameters)
+      ),
+  firstValueFrom(
+    this.services.GetPostTransactions(
+     {
+      ...transactionParameters,
+      tosend:{
+            startDate: moment(inventoryToBalance?.tkdateCalibration).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          endDate: moment(Enddate).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          tankId: '',
+          vehicleId: parameters['selectedVehicle'] || '',
+          typeVehicle: parameters['selectedTypeVehicle'] || '',
+          groupVehicle:parameters['selectedGroupVehicle'] || '',
+          onlyFuelIn:true
+      },
+      excludedFilling:false
+     }
+    )
+  )    
+
+])
+
+     
+      const rows: any[] = Array.isArray(RefuelsData.data) ? RefuelsData.data : [];
+      const rowsFuelIn:any[] = Array.isArray(fuelIn.data) ? fuelIn.data : [];
+      
+       const formatData = rows.map((record:transaction) =>({
+          ...record,
+          tsDateRefuel: moment(record.tsDateRefuel).tz('America/Guatemala').format('YYYY-MM-DD HH:mm'),
+          tsHourometer: parseFloat(Number(record.tsHourometer).toFixed(1)),
+          tsQuantity:parseFloat(Number(record.tsQuantity).toFixed(2)),
+          KM:parseFloat(Number(record.KM).toFixed(2)),
+          HRS:parseFloat(Number(record.HRS).toFixed(2)),
+          month:getMonthKey(record.tsDateRefuel)
+        }));
+
+        const formatDataFuelIN = rowsFuelIn.map((record:transaction) => ({
+          ...record,
+            tsDateRefuel: moment(record.tsDateRefuel).tz('America/Guatemala').format('YYYY-MM-DD HH:mm'),
+          tsHourometer: parseFloat(Number(record.tsHourometer).toFixed(1)),
+          tsQuantity:parseFloat(Number(record.tsQuantity).toFixed(2)),
+          KM:parseFloat(Number(record.KM).toFixed(2)),
+          HRS:parseFloat(Number(record.HRS).toFixed(2)),
+          month:getMonthKey(moment(record.tsDateRefuel).tz('America/Guatemala').format('YYYY-MM-DD HH:mm')) ?? ''
+        }))
+
+
+  const refuelsFormateddata = formatData.filter( (record:transaction) => record.tsTransactionType == 'Refuel'  && record.tsveVehicleID !== '');
+  const Transfersagainst = formatDataFuelIN.filter( (record:transaction) => record.tsppPumpID == inventoryToBalance?.ppPumpName && record.tsQrData !== 'INGRESO' )
+  const TransferInFavor = formatDataFuelIN.filter( (record:transaction) => record.tstkTankID == inventoryToBalance?.tkTankID && record.tsQrData !== 'INGRESO' );
+  const Ingresos = formatDataFuelIN.filter( (record:transaction) => record.tstkTankID == inventoryToBalance?.tkTankID && record.tsQrData == 'INGRESO' );
+
+  // console.log(inventoryToBalance);
+// console.log(refuelsFormateddata);
+// console.log(Transfersagainst);
+// console.log(TransferInFavor);
+// console.log(Ingresos);
+
+const calibrationDate =  moment(inventoryToBalance?.tkdateCalibration).tz('America/Guatemala').utc().format('YYYY-MM-DDTHH:mm:ss[Z]') ?? '';
+
+// Sustituye tkCalibrationVolume por el nombre exacto de tu propiedad.
+const calibrationVolume = Number(
+  inventoryToBalance?.tkcalibrationVolume ?? 0
+);
+
+const tankDescription  = inventoryToBalance?.tktankDescription ?? ''
+
+
+const months = generateMonthRange(calibrationDate,Enddate)
+
+
+const monthlymap = new Map<string,MonthlyTankBalance>();
+
+
+// Creamos todos los meses, incluso si no tuvieron movimientos.
+for (const month of months) {
+  monthlymap.set(month, {
+    tankDescription,
+    month,
+
+    initialBalance: 0,
+
+    refuelQuantity: 0,
+    refuelCount: 0,
+
+    transferOutQuantity: 0,
+    transferOutCount: 0,
+
+    transferInQuantity: 0,
+    transferInCount: 0,
+
+    incomeQuantity: 0,
+    incomeCount: 0,
+
+    totalInputs: 0,
+    totalOutputs: 0,
+
+    finalBalance: 0
+  });
 }
+
+
+
+for (const record of refuelsFormateddata) {
+  const month = record.month;
+  const balance = monthlymap.get(month);
+
+  if (!balance) continue;
+
+  balance.refuelQuantity += Number(record.tsQuantity) || 0;
+  balance.refuelCount++;
+}
+
+for (const record of Transfersagainst) {
+  const month = record.month;
+  const balance = monthlymap.get(month);
+
+  if (!balance) continue;
+
+  balance.transferOutQuantity += Number(record.tsQuantity) || 0;
+  balance.transferOutCount++;
+}
+
+for (const record of TransferInFavor) {
+  const month = record.month;
+  const balance = monthlymap.get(month);
+
+  if (!balance) continue;
+
+  balance.transferInQuantity += Number(record.tsQuantity) || 0;
+  balance.transferInCount++;
+}
+
+for (const record of Ingresos) {
+  const month = record.month;
+  const balance = monthlymap.get(month);
+
+  if (!balance) continue;
+
+  balance.incomeQuantity += Number(record.tsQuantity) || 0;
+  balance.incomeCount++;
+}
+
+
+
+let previousBalance = calibrationVolume;
+
+const tankBalance: MonthlyTankBalance[] = months.map(month => {
+  const balance = monthlymap.get(month)!;
+
+  const totalInputs =
+    balance.incomeQuantity +
+    balance.transferInQuantity;
+
+  const totalOutputs =
+    balance.refuelQuantity +
+    balance.transferOutQuantity;
+
+  const finalBalance =
+    previousBalance +
+    totalInputs -
+    totalOutputs;
+
+  const result: MonthlyTankBalance = {
+    ...balance,
+
+    initialBalance: roundQuantity(previousBalance),
+
+    refuelQuantity: roundQuantity(
+      balance.refuelQuantity
+    ),
+
+    transferOutQuantity: roundQuantity(
+      balance.transferOutQuantity
+    ),
+
+    transferInQuantity: roundQuantity(
+      balance.transferInQuantity
+    ),
+
+    incomeQuantity: roundQuantity(
+      balance.incomeQuantity
+    ),
+
+    totalInputs: roundQuantity(totalInputs),
+    totalOutputs:roundQuantity(totalOutputs),
+
+    finalBalance:roundQuantity(finalBalance)
+  };
+
+  previousBalance = finalBalance;
+
+  return result;
+});
+
+ // console.log('Balance mensual:', tankBalance);
+
+
+// const sumaryRefuels = summaryData(refuelsFormateddata,['tstankDescription','tstkTankID','month'],
+//   [
+//     {field:'tsQuantity',operation:'sum'},
+//     {field:'tsveVehicleID',operation:'count'}
+//   ]
+// );
+
+// const sumaryTransfersagainst = summaryData(Transfersagainst,['tsppPumpID','month'],
+//   [
+//     {field:'tsQuantity',operation:'sum'},
+//     {field:'tsQrData',operation:'count'}
+//   ]
+// );
+
+// const sumaryTransferInFavor = summaryData(TransferInFavor,['tstankDescription','tstkTankID','month'],
+//   [
+//     {field:'tsQuantity',operation:'sum'},
+//     {field:'tsQrData',operation:'count'}
+//   ]
+// );
+
+// const sumaryIngresos = summaryData(Ingresos,['tstankDescription','tstkTankID','month'],
+//   [
+//     {field:'tsQuantity',operation:'sum'},
+//     {field:'tsQrData',operation:'count'}
+//   ]
+// );
+
+
+
+// console.log(sumaryRefuels);
+// console.log(sumaryTransfersagainst);
+// console.log(sumaryTransferInFavor);
+// console.log(sumaryIngresos);
+this.reportData.set(tankBalance);
+await this.tryCreateOrUpdateTable();
+this.table?.setData(tankBalance);
+this.table?.redraw(true);
+this.tools.close();
+
+  } catch (error) {
+
+    this.tools.close();
+    this.tools.error('Error de servidor','Verifique la conexion ...');  
+  
+  } finally {
+    this.tools.close();
+  }
+
+};
+
 
 }

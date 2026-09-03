@@ -5,9 +5,7 @@ import { Component,
         Output,
         SimpleChanges,
         signal } from '@angular/core';
-
 import {CommonModule} from '@angular/common';
-
 import {
   FormControl,
   FormGroup,
@@ -16,21 +14,24 @@ import {
   Validators
 } from '@angular/forms';
 
-
 import {
   CatalogueFormMode,
   CatalogueFormField,
-  CatalogueFormConfig
+  CatalogueFormConfig,
+  CatalogueOption
  } from '../../models/crud'
 import { MiselanousData } from '../../services/miselanous-data';
-
-
+import {MatAutocomplete,MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatOptionModule} from '@angular/material/core'
 
 @Component({
   selector: 'app-catalogue-form-modal',
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatAutocomplete,
+    MatAutocompleteModule,
+    MatOptionModule
   ],
   templateUrl: './catalogue-form-modal.html',
   styleUrl: './catalogue-form-modal.scss',
@@ -75,7 +76,10 @@ export class CatalogueFormModal implements OnChanges {
     if (shouldRebuild && this.visible) {
       this.buildForm();
     }
-  }
+  };
+
+
+private readonly displayFunctions = new Map<string,(value: unknown) => string>();
 
   private buildForm(): void {
     if (!this.config) {
@@ -89,11 +93,33 @@ export class CatalogueFormModal implements OnChanges {
       const validators = this.getValidators(field);
       const initialValue = this.getInitialValue(field);
        
-      console.log(field);
+    // console.log(field);
 
-      if(field.name == 'TankId'){
+      if(field.name == 'FK_TankSF'){
        field.options = this.dataMiselanous.miselanousDataTank();
       }
+
+      if(field.name == 'FK_group_vehicle'){
+        field.options = this.dataMiselanous.MiselanousDataGroup();
+      } 
+      if(field.name == 'FK_vehicle_type'){
+        field.options = this.dataMiselanous.miselanousDataVehicleBrand();
+
+      } if(field.name == 'VehicleFK' ){
+      
+        field.options = this.dataMiselanous.miselanousDataVehicle();
+      
+      }
+
+
+         // console.log(this.dataMiselanous.MiselanousDataProduct());
+
+
+       if(field.name == 'FK_product'){
+          field.options = this.dataMiselanous.MiselanousDataProduct();
+        
+       };
+
 
       controls[field.name] = new FormControl(
         {
@@ -130,44 +156,269 @@ export class CatalogueFormModal implements OnChanges {
     }
 
     return validators;
+  };
+
+// private getInitialValue(
+//   field: CatalogueFormField
+// ): unknown {
+
+//   /**
+//    * UPDATE:
+//    * Busca el valor dentro del registro seleccionado.
+//    */
+//   if (this.mode === 'update' && this.record) {
+
+//     const propertyName =
+//       field.sourceField ?? field.name;
+
+//     const recordValue =
+//       this.record[propertyName];
+
+//     if (
+//       recordValue !== undefined &&
+//       recordValue !== null
+//     ) {
+
+//       /**
+//        * El autocomplete necesita el objeto completo
+//        * para mostrar option.label.
+//        */
+//       if (field.type === 'search-select') {
+//         return this.resolveSearchSelectValue(
+//           field,
+//           recordValue
+//         );
+//       }
+
+//       return recordValue;
+//     }
+//   }
+
+//   /**
+//    * CREATE:
+//    * Utiliza el valor predeterminado.
+//    */
+//   if (field.defaultValue !== undefined) {
+
+//     if (field.type === 'search-select') {
+//       return this.resolveSearchSelectValue(
+//         field,
+//         field.defaultValue
+//       );
+//     }
+
+//     return field.defaultValue;
+//   }
+
+//   if (field.type === 'checkbox') {
+//     return false;
+//   }
+
+//   /**
+//    * Para autocomplete es preferible null.
+//    */
+//   if (field.type === 'search-select') {
+//     return null;
+//   }
+
+//   return '';
+// }
+
+
+private getInitialValue(
+  field: CatalogueFormField
+): unknown {
+
+  /**
+   * UPDATE:
+   * Busca el valor dentro del registro seleccionado.
+   */
+  if (this.mode === 'update' && this.record) {
+
+    const propertyName =
+      field.sourceField ?? field.name;
+
+    const recordValue =
+      this.record[propertyName];
+
+    if (
+      recordValue !== undefined &&
+      recordValue !== null
+    ) {
+
+      /**
+       * El autocomplete necesita el objeto completo
+       * para mostrar option.label.
+       */
+      if (field.type === 'search-select') {
+        return this.resolveSearchSelectValue(
+          field,
+          recordValue
+        );
+      }
+
+      return recordValue;
+    }
   }
 
-  private getInitialValue(
-    field: CatalogueFormField
-  ): unknown {
-    /*
-     * UPDATE:
-     * Busca el valor dentro del registro seleccionado.
-     */
-    if (this.mode === 'update' && this.record) {
-      const propertyName =
-        field.sourceField ?? field.name;
+  /**
+   * CREATE:
+   * Utiliza el valor predeterminado.
+   */
+  if (field.defaultValue !== undefined) {
 
-      const recordValue =
-        this.record[propertyName];
-
-      if (
-        recordValue !== undefined &&
-        recordValue !== null
-      ) {
-        return recordValue;
-      }
+    if (field.type === 'search-select') {
+      return this.resolveSearchSelectValue(
+        field,
+        field.defaultValue
+      );
     }
 
-    /*
-     * CREATE:
-     * Utiliza el valor predeterminado.
-     */
-    if (field.defaultValue !== undefined) {
-      return field.defaultValue;
+    return field.defaultValue;
+  }
+
+  if (field.type === 'checkbox') {
+    return false;
+  }
+
+  /**
+   * Para autocomplete es preferible null.
+   */
+  if (field.type === 'search-select') {
+    return null;
+  }
+
+  return '';
+};
+
+
+
+private resolveSearchSelectValue(
+  field: CatalogueFormField,
+  value: unknown
+): CatalogueOption | null {
+
+  /**
+   * Si el valor ya tiene la estructura correcta,
+   * no es necesario volver a buscarlo.
+   */
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    'label' in value &&
+    'value' in value
+  ) {
+    return value as CatalogueOption;
+  }
+
+  /**
+   * Busca la opción utilizando el ID guardado.
+   */
+  const selectedOption = (field.options ?? []).find(
+    option =>
+      String(option.SFValue) === String(value)
+  );
+
+  return selectedOption ?? null;
+};
+
+getFilteredOptions(
+  field: CatalogueFormField
+): CatalogueOption[] {
+
+  const options = field.options ?? [];
+  const controlValue = this.form.get(field.name)?.value;
+
+  if (
+    controlValue === null ||
+    controlValue === undefined ||
+    controlValue === ''
+  ) {
+    return options;
+  }
+
+  const searchText =
+    typeof controlValue === 'object'
+      ? controlValue.label
+      : String(controlValue);
+
+  const normalizedSearch = this.normalizeText(searchText);
+
+  return options.filter(option => {
+    const normalizedLabel = this.normalizeText(option.label);
+    const normalizedValue = this.normalizeText(option.SFValue);
+
+    return (
+      normalizedLabel.includes(normalizedSearch) ||
+      normalizedValue.includes(normalizedSearch)
+    );
+  });
+};
+
+
+getDisplayFunction(
+  field: CatalogueFormField
+): (value: unknown) => string {
+
+  const existingFunction = this.displayFunctions.get(field.name);
+
+  if (existingFunction) {
+    return existingFunction;
+  }
+
+  const displayFunction = (value: unknown): string => {
+    if (
+      value === null ||
+      value === undefined ||
+      value === ''
+    ) {
+      return '';
     }
 
-    if (field.type === 'checkbox') {
-      return false;
-    }
+    const option = (field.options ?? []).find(
+      item => String(item.value) === String(value)
+    );
 
+    return option?.label ?? String(value);
+  };
+
+  this.displayFunctions.set(field.name, displayFunction);
+
+  return displayFunction;
+};
+
+displaySearchOption = (
+  option: CatalogueOption | string | number | null
+): string => {
+
+  if (
+    option === null ||
+    option === undefined
+  ) {
     return '';
   }
+
+  if (typeof option === 'object') {
+    return option.label ?? '';
+  }
+
+  return String(option);
+};
+
+
+
+private normalizeText(value: unknown): string {
+  return String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+openAutocomplete(event: Event): void {
+  const input = event.target as HTMLInputElement;
+
+  input.select();
+}
 
   isInvalid(fieldName: string): boolean {
     const control = this.form.get(fieldName);
@@ -225,6 +476,37 @@ export class CatalogueFormModal implements OnChanges {
     const formValues =
       this.form.getRawValue() as Record<string, unknown>;
 
+
+ const fields = this.config?.fields ?? [];
+
+  const normalizedValues = fields.reduce(
+    (
+      result: Record<string, unknown>,
+      field: CatalogueFormField
+    ) => {
+
+      const currentValue = formValues[field.name];
+
+      if (
+        field.type === 'search-select' &&
+        currentValue !== null &&
+        typeof currentValue === 'object' &&
+        'SFValue' in currentValue
+      ) {
+        result[field.name] = (
+          currentValue as CatalogueOption
+        ).SFValue;
+      } else {
+        result[field.name] = currentValue;
+      }
+
+      return result;
+    },
+    {}
+  );
+
+
+
     /*
      * Conserva datos como el ID cuando sea update.
      */
@@ -232,11 +514,11 @@ export class CatalogueFormModal implements OnChanges {
       ...(this.mode === 'update' && this.record
         ? this.record
         : {}),
-      ...formValues
+      ...normalizedValues
     };
 
     this.saveRecord.emit(payload);
-  }
+  };
 
   get modalTitle(): string {
     if (!this.config) {

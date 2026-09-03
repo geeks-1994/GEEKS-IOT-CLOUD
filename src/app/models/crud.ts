@@ -7,11 +7,23 @@ export type CatalogueInputType =
   | 'date'
   | 'textarea'
   | 'select'
-  | 'checkbox';
+  | 'checkbox'
+  | 'selectFK'
+  | 'search-select'
+
+  type CrudMethod = | 'create'
+  | 'update'
+  | 'delete'
+
+export interface ParameterOptions {
+  name:string;
+  value:any;
+ }
 
 export interface CatalogueOption {
   label: string;
   value: string | number | boolean;
+  SFValue?:string | number 
 }
 
 export interface CatalogueFormField {
@@ -60,4 +72,24 @@ export interface CatalogueFormConfig {
   idField: string;
 
   fields: CatalogueFormField[];
+};
+
+
+
+
+export interface crudService {
+ nameObject:string;
+TypeMethod:CrudMethod;
+user:string;
+password:string;
+company:string
+parametersData:ParameterOptions[]
+
+}
+
+
+export interface ResponseCrud{
+  success:string;
+  operation:string;
+  response:any;
 }

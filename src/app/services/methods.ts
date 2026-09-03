@@ -2,9 +2,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {isPlatformBrowser} from '@angular/common'
 import { Injectable,Inject,PLATFORM_ID, signal,computed } from '@angular/core';
 import {Observable,throwError} from 'rxjs';
-import { GsuiteLoginResponse, GsuiteUser, GtokenDatasession, MeasureData, ParametersCatalogue, ReportCatalogue, RequestMeasure, RequestPayload, ResultMeasure, resultRegister, SessionData, ToolbarOptions } from '../models/generals-interfaces';
+import { GsuiteLoginResponse, GsuiteUser, GtokenDatasession, MeasureData, ParametersCatalogue, ReportCatalogue, RequestMeasure, RequestPayload, ResultMeasure, resultRegister, Roles, SessionData, ToolbarOptions } from '../models/generals-interfaces';
 import { ChartReport } from '../models/report-interfaces';
 import { ApexYAxis } from 'apexcharts';
+import { crudService, ResponseCrud } from '../models/crud';
+import { sign } from 'crypto';
  
 @Injectable({
   providedIn: 'root',
@@ -19,6 +21,17 @@ export class Methods {
     passwordSalesForce:'',
     company:''
    });
+
+   public CataloguePermices = signal<Roles[]>([
+    {name:'CREATE',active:false}
+   ]);
+
+   public FleetPermices = signal<Roles[]>([
+    {name:'CREATE',active:false}
+   ]);
+
+
+
 
    public  SessionLoaded = signal<boolean>(false);
 
@@ -36,7 +49,6 @@ export class Methods {
   setSession(data:SessionData):void{
    this.SessionData.set(data);
    this.SessionLoaded.set(true);
-   
 
   };
 
@@ -149,7 +161,7 @@ public reports: ReportCatalogue[] = [
 },
   { title: 'Tagcode', field: 'tsTagSalesForceID', minWidth: 130 },
   { title: 'Vehículo', field: 'tsveVehicleID', minWidth: 150,headerFilter: 'input' },
-  { title: 'Tipo vehículo', field: 'tsveTypeVehicle', minWidth: 150,headerFilter: 'input' },
+  { title: 'Tipo vehículo', field: 'tsveTypeVehicle', minWidth: 150, headerFilter: 'input' },
   { title: 'Conductor', field: 'tsdvDriverName', minWidth: 180 },
   { title: 'Odómetro', field: 'tsOdometer', minWidth: 120 },
   { title: 'Odómetro previo', field: 'tsPreviusOdometer', minWidth: 150 },
@@ -167,7 +179,8 @@ public reports: ReportCatalogue[] = [
   bottomCalcFormatter: (cell: any) => {
     const value = Number(cell.getValue() || 0);
     return value.toFixed(2);
-  } }
+  } },
+  {title:'Rererencia #4',field:'tsQrData', headerFilter: 'input',minWidth: 150}
 ],
   enableGrid:true
   },
@@ -292,7 +305,65 @@ public reports: ReportCatalogue[] = [
     ],
     columns:[],
     enableGrid:false
+  },
+  {
+      name:'Balance',
+      enableChart:false,
+      title:'Balance de saldos',
+      method: () => {},
+      parameters:[
+        {
+        name: 'EndDate',
+        label: 'Fecha  de conciliacion',
+        type: 'date',
+        enabled: true,
+        value: null,
+        colClass: 'col-12 col-md-3 col-lg-2'
+      }, 
+      {
+        name: 'selectedDispenser',
+        label: 'Inventario',
+        type: 'select',
+        enabled: true,
+        value: '',
+        colClass: 'col-12 col-md-3 col-lg-3',
+        options: [
+          { label: 'Todos', value: '' },
+          { label: 'Candelaria', value: 'Candelaria' },
+          { label: 'ICSA01', value: 'ICSA01' }
+        ]
+
+      }
+      ],
+      columns:[
+         { title: 'Inventario', field: 'tankDescription', minWidth: 180 },
+         { title: 'Mes', field: 'month', minWidth: 120,sorter: 'string' },
+         { title: 'Saldo Inicial', field: 'initialBalance', sorter: 'number', minWidth: 150 },
+         { title: 'Saldo Final', field: 'finalBalance', sorter: 'number', minWidth: 150 },
+        
+         { title: 'Reabestecimientos', field: 'refuelQuantity', sorter: 'number', minWidth: 150 },
+         { title: 'Cont. Reabestecimientos', field: 'refuelCount', sorter: 'number', minWidth: 150 },
+
+        { title: 'Traslados salida', field: 'transferOutQuantity', sorter: 'number', minWidth: 150 },
+        { title: 'Traslados salida cont.', field: 'transferOutCount', sorter: 'number', minWidth: 150 },
+
+
+        { title: 'Traslados a favor', field: 'transferInQuantity', sorter: 'number', minWidth: 150 },
+        { title: 'Traslados a favor cont.', field: 'transferInCount', sorter: 'number', minWidth: 150 },
+   
+        { title: 'Ingresos', field: 'incomeQuantity', sorter: 'number', minWidth: 150 },
+        { title: 'Ingresos cont.', field: 'incomeCount', sorter: 'number', minWidth: 150 },
+   
+
+        { title: 'Total Ingresos', field: 'totalInputs', sorter: 'number', minWidth: 150 },
+        { title: 'Total Salidas', field: 'totalOutputs', sorter: 'number', minWidth: 150 }
+
+
+
+      ],
+      enableGrid:true
   }
+
 ];
    
 
@@ -325,8 +396,13 @@ public chartReports:ChartReport[] = [
       shared: true,
       intersect: false,
       y: {
-        formatter: (val: number, { seriesIndex }) =>
-          seriesIndex === 0 ? `${(val ?? 0).toFixed(1)} gal` : `${(val ?? 0).toFixed(2)} km/gal`
+        formatter: (val: number, { seriesIndex }) => {
+       
+          //console.log(seriesIndex)
+          return seriesIndex === 0 ? `${(val ?? 0).toFixed(1)}` : `${(val ?? 0).toFixed(2)}`
+       
+        }
+          
       }
     },
     legend:{ position: 'top', horizontalAlign: 'left' },
@@ -442,7 +518,7 @@ public chartReports:ChartReport[] = [
       },
       stroke:{
         curve:'smooth',
- width: [1, 2, 2],
+ width: [1, 2, 2,2],
       },
       fill:{
         type:'gradient',  
@@ -511,7 +587,7 @@ public chartReports:ChartReport[] = [
               },
             },
                 {
-              seriesName: 'Distancia',
+              seriesName: 'Km - Hrs',
               opposite: true,
               axisTicks: {
                 show: true,
@@ -526,7 +602,7 @@ public chartReports:ChartReport[] = [
                 },
               },
               title: {
-                text: 'Distancia',
+                text: 'Km - Hrs',
                 style: {
                   color: '#33c858',
                 },
@@ -773,6 +849,19 @@ return this.http.post<T[]>(uri,sendto,{headers:header});
 
   };
   
+
+
+  CrudMethods(tosend:crudService):Observable<ResponseCrud>{
+     const url = `${this.baseURL}/gsuite/CRUD_Methods`;
+
+     const header = new HttpHeaders({
+      'Content-Type':'application/json'
+     });
+
+
+     return this.http.post<ResponseCrud>(url,tosend,{headers:header});
+     
+  };
 
 
 }

@@ -52,3 +52,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border-radius: 28px !important;
   overflow: hidden !important;
 }
+
+
+.cdk-overlay-container {
+  z-index: 3000 !important;
+}

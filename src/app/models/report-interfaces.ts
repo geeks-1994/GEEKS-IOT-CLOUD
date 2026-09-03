@@ -17,6 +17,9 @@ import {
   ApexYAxis
 } from 'ng-apexcharts';
 import { ReportCatalogue } from './generals-interfaces';
+import moment from 'moment-timezone';
+
+
 
 export type DynamicChartSeries =
   | ApexAxisChartSeries
@@ -80,6 +83,23 @@ export interface DynamicChartSerie {
   name: string;
   type?: ApexSeriesType;
   data: number[];
+}
+
+
+export function getMonthYear(dateValue: string | Date): string {
+  const date = dateValue instanceof Date
+    ? dateValue
+    : new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return 'Fecha inválida';
+  }
+
+  return new Intl.DateTimeFormat('es-GT', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'America/Guatemala'
+  }).format(date);
 }
 
 export function summaryData(
@@ -348,4 +368,68 @@ export interface DynamicChartModalData {
   chartConfig:DynamicChartConfig;
   width?: string;
   height?: string;
+};
+
+
+
+//helpers  para reporte 
+
+export function getMonthKey(date: string | Date): string {
+  return moment(date)
+    .tz('America/Guatemala')
+    .format('YYYY-MM');
+}''
+
+
+export function roundQuantity(value: number): number {
+  return Number((Number(value) || 0).toFixed(2));
+};
+
+
+export function generateMonthRange(
+  startDate: string | Date,
+  endDate: string | Date
+): string[] {
+
+  const months: string[] = [];
+
+  const current = moment(startDate)
+    .tz('America/Guatemala')
+    .startOf('month');
+
+  const end = moment(endDate)
+    .tz('America/Guatemala')
+    .startOf('month');
+
+  while (current.isSameOrBefore(end, 'month')) {
+    months.push(current.format('YYYY-MM'));
+    current.add(1, 'month');
+  }
+
+  return months;
+};
+
+
+export interface MonthlyTankBalance {
+  tankDescription: string;
+  month: string;
+
+  initialBalance: number;
+
+  refuelQuantity: number;
+  refuelCount: number;
+
+  transferOutQuantity: number;
+  transferOutCount: number;
+
+  transferInQuantity: number;
+  transferInCount: number;
+
+  incomeQuantity: number;
+  incomeCount: number;
+
+  totalInputs: number;
+  totalOutputs: number;
+
+  finalBalance: number;
 };

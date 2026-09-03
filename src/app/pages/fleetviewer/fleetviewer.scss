@@ -459,3 +459,122 @@
     flex-wrap: nowrap;
   }
 }
+
+
+.fleet-search-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.fleet-search-box {
+  position: relative;
+  flex: 1;
+  max-width: 560px;
+
+  > i {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    color: #718096;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  input {
+    height: 42px;
+    padding-left: 40px;
+    border: 1px solid #dce3eb;
+    border-radius: 10px;
+    background: #f8fafc;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+
+    &:focus {
+      background: #ffffff;
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
+    }
+  }
+}
+
+.fleet-add-button {
+  min-height: 42px;
+  padding: 6px 17px 6px 7px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  border: 0;
+  border-radius: 11px;
+
+  color: #ffffff;
+  background: linear-gradient(135deg, #0d6efd, #0758c9);
+
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  box-shadow: 0 5px 14px rgba(13, 110, 253, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+
+  .fleet-add-icon {
+    width: 30px;
+    height: 30px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.17);
+
+    i {
+      font-size: 1rem;
+    }
+  }
+
+  &:hover {
+    color: #ffffff;
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #0758c9, #064ba7);
+    box-shadow: 0 7px 18px rgba(13, 110, 253, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 9px rgba(13, 110, 253, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(13, 110, 253, 0.25);
+    outline-offset: 2px;
+  }
+}
+
+@media (max-width: 576px) {
+  .fleet-search-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .fleet-search-box {
+    width: 100%;
+    max-width: none;
+  }
+
+  .fleet-add-button {
+    width: 100%;
+  }
+}

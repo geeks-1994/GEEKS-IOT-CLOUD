@@ -6,7 +6,7 @@ import { map, filter, distinctUntilChanged } from 'rxjs/operators';
 
 import { Methods } from '../../services/methods';
 import { Tools } from '../../services/tools';
-import { ParametersCatalogue } from '../../models/generals-interfaces';
+import { ParametersCatalogue, Roles } from '../../models/generals-interfaces';
 
 import {CatalogueFormModal} from '../../shared/catalogue-form-modal/catalogue-form-modal'
 import {
@@ -16,9 +16,10 @@ import {
 
 import {getCatalogueFormConfig} from '../../configs/catalogue-form-field.config';
 import { MiselanousData } from '../../services/miselanous-data';
+import { CRUDServices } from '../../services/crud.services';
 
 
-type CatalogueName = 'pumps' | 'tanks' | 'product' | 'type_vehicles';
+type CatalogueName = 'pumps' | 'tanks' | 'product' | 'type_vehicles' | 'group';
 
 
 
@@ -40,7 +41,8 @@ export class Catalogueviewer implements OnInit {
     private services: Methods,
     public tools: Tools,
     public router: Router,
-    public miselanous:MiselanousData
+    public miselanous:MiselanousData,
+    public CRUD:CRUDServices
   ) {
 
 effect( () =>{
@@ -60,6 +62,8 @@ effect( () =>{
         this.catalogueTitle.set(this.catalogueConfig[nameCatalogue].title);
         this.currentPage.set(1);
    
+            this.catalogueName.set(nameCatalogue);
+        this.verifyPermissions(this.services.CataloguePermices());
         this.getDataCatalogues(nameCatalogue);
         this.miselanous.loadDataMiselaous();
 
@@ -156,6 +160,19 @@ effect( () =>{
         'Empresa',
         'Estado'
       ]
+    },
+    group:{
+      title:'Grupo de ehiculos',
+      columns:[
+        'Name',
+        'active',
+        'company'
+      ],
+      captions:[
+        'Nombre del grupo',
+        'Estado',
+        'Empresa'
+      ]
     }
   };
 
@@ -168,7 +185,14 @@ formConfig = signal<CatalogueFormConfig | null>(null);
 
 selectedRecord = signal<Record<string, unknown> | null>(null);
 
-catalogueName = signal('');
+catalogueName = signal<CatalogueName>('pumps');
+
+
+
+  // permisos de roles
+  create = signal<boolean>(false);
+  update = signal<boolean>(false);
+  delete = signal<boolean>(false);
 
 
 
@@ -294,6 +318,39 @@ catalogueName = signal('');
   };
 
 
+  verifyPermissions(roles:Roles[] = []): void {
+  try {
+    const permissions = new Map(
+      roles.map(role => [
+        role.name?.toUpperCase(),
+        role.active === true
+      ])
+    );
+
+    this.create.set(
+      permissions.get('CREATE') ?? false
+    );
+
+    this.update.set(
+      permissions.get('UPDATE') ?? false
+    );
+
+    this.delete.set(
+      permissions.get('DELETE') ?? false
+    );
+
+  } catch (error) {
+    this.create.set(false);
+    this.update.set(false);
+    this.delete.set(false);
+
+    this.tools.error(
+      'Permisos',
+      'Verifique los permisos configurados'
+    );
+  }
+};
+
 
   createRecord(): void {
 
@@ -317,6 +374,7 @@ catalogueName = signal('');
 }
 
 editRecord(row: Record<string, any>): void {
+
   console.log('Editar registro:', row);
   const config = getCatalogueFormConfig(
 this.catalogueName()
@@ -336,8 +394,30 @@ this.catalogueName()
 
 }
 
-deleteRecord(row: Record<string, any>): void {
+async deleteRecord(row: Record<string, any>):Promise<void> {
   console.log('Eliminar registro:', row);
+
+  try {
+    const stringInput = this.catalogueName() + 'delete';
+
+    if(this.CRUD.CRUDmethods[stringInput]){
+
+      const response = await this.tools.question('Eliminar',`Esta seguro de eliminar el registro ${row['Name']} ?`);
+
+      if(response.isConfirmed){
+       
+              this.CRUD.CRUDmethods[stringInput](row);
+              this.tools.toast('Item eliminado','success','center')
+      }
+
+    }
+    
+ //   this.tools.info('Catalogo','este metodo aun no existe')
+  } catch (error) {
+    this.tools.error('error','el catalogo no puede ser eliminado');
+  }
+
+
 };
 
 
@@ -347,20 +427,55 @@ closeFormModal(): void {
 };
 
 
-saveCatalogueRecord(
+async saveCatalogueRecord(
   data: Record<string, unknown>
-): void {
-  if (this.formMode() === 'create') {
-    console.log('Datos para crear:', data);
+):Promise<void> {
 
-this.tools.info('Creacion','El usuario creo un nuevo item');
+     console.log(this.formMode());
+  if (this.formMode() === 'create') {
+      console.log('Datos para crear:', data);
+   // console.log(this.catalogueName());
+   
+    const stringInput:any = this.catalogueName() + 'create';
+
+     if(this.CRUD.CRUDmethods[stringInput]){
+      
+       await this.CRUD.CRUDmethods[stringInput](data);
+        await this.getDataCatalogues(this.catalogueName());
+      this.tools.info('Creacion','El usuario creo un nuevo item');
+      this.tools.playSound('/sounds/ost_1.mp3');
+     }
+
+
+
 this.closeFormModal();
     return;
   }
 
-  console.log('Datos para actualizar:', data);
+  if(this.formMode() === 'update'){
 
-   this.tools.info('Actualizacion','El usuario actualizo el catalogo');
+
+        const stringInput:any = this.catalogueName() + 'update';
+
+     if(this.CRUD.CRUDmethods[stringInput]){
+      
+     await this.CRUD.CRUDmethods[stringInput](data);
+     await this.getDataCatalogues(this.catalogueName()); 
+     this.tools.info('Actualizacion',`el registro ${data['Name']} fue modificado...`);
+      this.tools.playSound('/sounds/ost_1.mp3');
+     }else {
+
+      this.tools.toast('el metodo no existe','error','center');
+
+     }
+
+
+
+this.closeFormModal();
+    return;
+
+  }
+
 };
 
 }

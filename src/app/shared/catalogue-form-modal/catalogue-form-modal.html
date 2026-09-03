@@ -138,6 +138,119 @@
 
               </div>
 
+
+            <!-- este componente es de autobusqueda -->
+               <div
+  *ngIf="field.type === 'search-select'"
+  [class]="field.colClass || 'col-md-6'">
+
+  <label
+    class="form-label"
+    [for]="field.name">
+
+    {{ field.label }}
+
+    <span
+      *ngIf="field.required"
+      class="text-danger">
+      *
+    </span>
+
+  </label>
+
+  <input
+    type="text"
+    class="form-control"
+    autocomplete="off"
+    [class.is-invalid]="isInvalid(field.name)"
+    [id]="field.name"
+    [placeholder]="field.placeholder || 'Buscar y seleccionar...'"
+    [formControlName]="field.name"
+    [matAutocomplete]="catalogueAutocomplete"
+    (focus)="openAutocomplete($event)">
+
+  <mat-autocomplete
+    #catalogueAutocomplete="matAutocomplete"
+    class="catalogue-autocomplete-panel"
+    [displayWith]="displaySearchOption">
+
+    <mat-option
+      *ngFor="let option of getFilteredOptions(field)"
+      [value]="option">
+
+      {{ option.label }}
+
+    </mat-option>
+
+    <mat-option
+      *ngIf="getFilteredOptions(field).length === 0"
+      disabled>
+
+      No se encontraron resultados
+
+    </mat-option>
+
+  </mat-autocomplete>
+
+  <div
+    class="invalid-feedback"
+    *ngIf="isInvalid(field.name)">
+
+    {{ getFieldError(field) }}
+
+  </div>
+
+</div>
+
+            <!-- este componente es de autobusqueda -->
+
+                            <!-- Select FK solo cuando el dato  tiene relacion con otro componente -->
+              <div *ngIf="field.type === 'selectFK'">
+
+                <label
+                  class="form-label"
+                  [for]="field.name">
+
+                  {{ field.label }}
+
+                  <span
+                    class="text-danger"
+                    *ngIf="field.required">
+                    *
+                  </span>
+
+                </label>
+
+                <select
+                  class="form-select"
+                  [class.is-invalid]="isInvalid(field.name)"
+                  [id]="field.name"
+                  [formControlName]="field.name">
+
+                  <option value="">
+                    Seleccione una opción
+                  </option>
+
+                  <option
+                    *ngFor="let option of field.options || []"
+                    [ngValue]="option.SFValue">
+
+                    {{ option.label }}
+
+                  </option>
+
+                </select>
+
+                <div
+                  class="invalid-feedback"
+                  *ngIf="isInvalid(field.name)">
+
+                  {{ getFieldError(field) }}
+
+                </div>
+
+              </div>
+
               <!-- Textarea -->
               <div *ngIf="field.type === 'textarea'">
 

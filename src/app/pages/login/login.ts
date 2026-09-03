@@ -70,7 +70,7 @@ next: async (response:GsuiteLoginResponse) => {
 
 togglePassword(): void {
   this.showPassword = !this.showPassword;
-}
+};
 
 
 openRegisteruser():void{
@@ -94,6 +94,6 @@ openRegisteruser():void{
     this.alerts.toast('error en el servidor','error','top')
   }
 
-}
+};
 
 }

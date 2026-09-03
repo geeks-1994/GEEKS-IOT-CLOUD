@@ -68,6 +68,14 @@ export class MainLayout  implements OnInit{
            '/main/reportviewer',
            'Fuel_Measure'
           ]
+        },
+        {
+         name:'Balance',
+         description:'Balance de saldo por Tanque',
+         route:[
+          '/main/reportviewer',
+          'Balance'
+         ]
         }
       ]
     }
@@ -126,6 +134,8 @@ checkSession(): void {
       };
 
       this.services.setSession(dataSession);
+       this.services.CataloguePermices.set(user.user.RolesCatalogues ?? []);
+       this.services.FleetPermices.set(user.user.RolesFleet ?? []);
 
     //  console.log('Sesión cargada:', this.services.SessionData());
     },
@@ -169,7 +179,7 @@ async logOut():Promise<void>{
       localStorage.removeItem('gsuiteToken');
 
       this.tools.info('Session','te esperamos nuevamente ...:)');
-
+  this.tools.playSound('/sounds/delete_ost.mp3');
       this.router.navigate(['/']);
 
   }

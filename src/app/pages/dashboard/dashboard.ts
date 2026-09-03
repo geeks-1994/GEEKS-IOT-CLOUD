@@ -596,10 +596,38 @@ async FleetDataReport(DataRecord: resultRegister,RegisterOk: boolean = true ):  
 
       eficiency: Number(
         Number(record.eficiency || 0).toFixed(2)
-      )
+      ),
+      delta: record.HRS > 0 ? record.HRS : record.KM
     }));
-    
 
+    let DataeficiencieRaw =  rows.map((record:transaction) =>{
+
+      if(record.KM > 0){
+           
+        const rt = {
+          Name:'Km/Gls',
+          value:record.eficiency,
+          checkValue:record.efCheckRequired
+         };
+
+         return rt
+        } else if(record.HRS > 0){
+          
+                  const rt = {
+          Name:'Gls/Hrs',
+          value:record.eficiency,
+          checkValue:record.efCheckRequired
+         };
+         return rt
+        }
+
+  return null;
+    })
+    .filter(item => item !== null);
+  
+
+    console.log(DataeficiencieRaw);
+     
     const auditLog = formatData.filter(record => record.efCheckRequired == true);
 
 
@@ -626,10 +654,17 @@ async FleetDataReport(DataRecord: resultRegister,RegisterOk: boolean = true ):  
 
     const thirdSerie = createChartSerie<any>(
       formatData,
-      'KM',
-      'Distancia',
+      'delta',
+      'Km-Hrs',
       'area'
     );
+
+    const fourthSerie = createChartSerie<any>(
+      formatData,
+      'HRS',
+      'Horas',
+      'area'
+    )
 
     // Categorías del eje X
     const categories = createChartCategories(
@@ -640,9 +675,14 @@ async FleetDataReport(DataRecord: resultRegister,RegisterOk: boolean = true ):  
      //sparline series
      const categorySpark = createChartCategories(formatData,'eficiency'); 
      const categorySparkformat:any = convertArrayType(categorySpark,'number');
-     const avgEficiency = summaryData(formatData,['tscpCompanyID'],[{ field: 'eficiency', operation: 'avg' }])[0];
+      //separo los datos de eficiencia
+     const avgEficiency_km = summaryData(DataeficiencieRaw,['Name'],[{ field: 'value', operation: 'avg' }]);
+     
+     const [kmDelta,HrsDelta] = [avgEficiency_km?.[0],avgEficiency_km?.[1]]
+   
 
-     console.log('Promedio de eficiencia:', avgEficiency?.eficiency_avg);
+    
+
     const dataChartSeries: ApexAxisChartSeries = [
       seriesQuantity,
       seriesEfficiency
@@ -664,12 +704,24 @@ async FleetDataReport(DataRecord: resultRegister,RegisterOk: boolean = true ):  
       ...(chartConfigOne?.chart ?? EMPTY_CHART_CONFIG),
       series:sparlineSeries,
       title:{
-          text:`km*gls: ${avgEficiency?.eficiency_avg.toFixed(2)}`,
+          text:`${kmDelta?.Name ?? 'Km/Gls'}: ${kmDelta?.value_avg.toFixed(1) ?? 0} -
+                ${HrsDelta?.Name ?? 'Hrs/gls'} : ${HrsDelta?.value_avg.toFixed(1) ?? 0}`,
             offsetX: 0,
             style: {
-              fontSize: '38px',
+              fontSize: '32px',
             },
+            
+      },
+         subtitle:{
+      text:'Eficiencia',
+      offsetX:0,
+      offsetY:40,
+      style:{
+        fontSize:'14px',
+        color:'#2e1d90'
       }
+    }
+      
     };
 
 
@@ -787,6 +839,27 @@ async generateReport(values: Record<string, any>): Promise<void> {
 
 onToolbarCleared(): void {
   console.log('Toolbar limpiado');
+}
+
+async refreshDashboard(): Promise<void> {
+  try {
+    this.tools.loading(
+      'Actualizando dashboard...',
+      'Cargando información'
+    );
+
+
+await this.getDataGeneral();
+await this.getDataTanks();
+this.tools.close();
+  } catch (error) {
+
+this.tools.close();
+    this.tools.error(
+      'Dashboard',
+      'No fue posible actualizar la información.'
+    );
+  }
 }
 
 

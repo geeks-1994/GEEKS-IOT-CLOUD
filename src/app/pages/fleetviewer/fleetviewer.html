@@ -55,23 +55,47 @@
       </div>
     </div>
 
-  </div>
 
-  <!-- Barra de búsqueda -->
-  <div class="fleet-search-toolbar" *ngIf="catalogueData().length > 0">
-
-    <div class="fleet-search-box">
-      <i class="bi bi-search"></i>
-
-      <input
-        type="text"
-        class="form-control form-control-sm"
-        placeholder="Buscar vehículo, placa, conductor, tag..."
-        [value]="searchText()"
-        (input)="changeSearch($any($event.target).value)">
-    </div>
 
   </div>
+   
+<!-- Barra de búsqueda y creación -->
+<div
+  class="fleet-search-toolbar"
+  *ngIf="catalogueData().length > 0">
+
+  <div class="fleet-search-box">
+    <i class="bi bi-search"></i>
+
+    <input
+      type="text"
+      class="form-control form-control-sm"
+      placeholder="Buscar vehículo, placa, conductor, tag..."
+      [value]="searchText()"
+      (input)="changeSearch($any($event.target).value)">
+  </div>
+
+
+<!-- boton de creacion de items -->
+ @if(create()){
+
+   <button
+    type="button"
+    class="fleet-add-button"
+    title="Agregar nuevo registro"
+    aria-label="Agregar nuevo registro"
+     (click)="createRecord()"
+    >
+
+    <span class="fleet-add-icon">
+      <i class="bi bi-plus-lg"></i>
+    </span>
+
+    <span>Agregar</span>
+  </button>
+ }
+
+</div>
 
   <!-- Barra de paginado -->
   <div class="fleet-pager-toolbar" *ngIf="catalogueData().length > 0">
@@ -153,7 +177,14 @@
           <th *ngFor="let column of catalogueCaptions()">
             {{ column }}
           </th>
+
+                     <th class="text-center">
+            Acciones
+          </th>
         </tr>
+
+
+
       </thead>
 
       <tbody>
@@ -191,6 +222,125 @@
             </ng-container>
 
           </td>
+
+
+
+             <!-- Acciones -->
+          <td class="text-center">
+
+                @if (!isVehicle()){
+
+            <div class="d-flex justify-content-center align-items-center gap-2">
+
+@if( update() ){
+                <button
+                type="button"
+                class="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center"
+                title="Editar registro"
+                aria-label="Editar registro"
+                (click)="editRecord(row)"
+                >
+
+                <i class="bi bi-pencil-square"></i>
+
+              </button>
+
+
+}
+   <!-- permiso para eliminar  -->
+ 
+    @if(delete()){
+                <button
+                type="button"
+                class="btn btn-outline-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                title="Eliminar registro"
+                aria-label="Eliminar registro"
+                (click)="deleteRecord(row)"
+                >
+
+                <i class="bi bi-trash3"></i>
+
+              </button>
+    }
+
+
+
+            </div>
+
+                } 
+                
+                
+                
+              @if (isVehicle()){
+              
+          <div class="d-flex justify-content-center align-items-center gap-2">
+
+
+@if(update()){
+
+                          <!-- //Datos normales del vehiculo -->
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center"
+                title="Editar registro"
+                aria-label="Editar registro"
+                (click)="editRecord(row)"
+                >
+
+                <i class="bi bi-pencil-square"></i>
+
+              </button>
+
+            <!-- //opcion de cuotas para el vehiculo -->
+              <button
+                type="button"
+                class="btn btn-outline-warning btn-sm d-inline-flex align-items-center justify-content-center"
+                title="Agregar Cuota"
+                aria-label="Agregar Cuota"
+                (click)="editRecord(row,'VehiclesQuote')"
+                >
+
+                <i class="bi bi-ev-station-fill"></i>
+
+              </button>
+
+
+                <!-- modulo de mantenimiento -->
+               <button
+                type="button"
+                class="btn btn-outline-info btn-sm d-inline-flex align-items-center justify-content-center"
+                title="Modulo Mantenimiento"
+                aria-label="Modulo Mantenimiento"
+                (click)="editRecord(row,'VehiclesMaintance')"
+                >
+
+                <i class="bi bi-tools"></i>
+
+              </button>
+
+}
+              
+   @if(delete()){
+              <button
+                type="button"
+                class="btn btn-outline-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                title="Eliminar registro"
+                aria-label="Eliminar registro"
+                (click)="deleteRecord(row)"
+                >
+
+                <i class="bi bi-trash3"></i>
+
+              </button>
+   }
+
+
+            </div>
+
+                }
+
+          </td>
+
         </tr>
       </tbody>
 
@@ -208,3 +358,16 @@
   </div>
 
 </div>
+
+
+
+<app-catalogue-form-modal
+[visible]="formModalVisible()"
+[mode]="formMode()"
+[config]="formConfig()"
+[record]="selectedRecord()"
+(closeModal)="closeFormModal()"
+(saveRecord)="saveCatalogueRecord($event)"
+>
+
+</app-catalogue-form-modal>
