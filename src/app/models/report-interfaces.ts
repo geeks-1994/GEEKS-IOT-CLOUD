@@ -1,4 +1,4 @@
-type Operation = 'sum' | 'avg' | 'min' | 'max' | 'count';
+type Operation = 'sum' | 'avg' | 'min' | 'max' | 'count'| 'weightedAvg';
 import {
   ApexAxisChartSeries,
   ApexNonAxisChartSeries,
@@ -75,6 +75,7 @@ export type ApexSeriesType =
 interface SummaryField {
     field: string;
     operation: Operation;
+    weightField?: string;
 }
 
 
@@ -103,102 +104,144 @@ export function getMonthYear(dateValue: string | Date): string {
 }
 
 export function summaryData(
-    data: any[],
-    groupBy: string[],
-    fields: SummaryField[]
+  data: any[],
+  groupBy: string[],
+  fields: SummaryField[]
 ): any[] {
+  const map = new Map<string, any>();
 
-    const map = new Map<string, any>();
+  for (const row of data) {
+    const key = groupBy
+      .map(field => String(row[field] ?? ''))
+      .join('|');
 
-    for (const row of data) {
+    if (!map.has(key)) {
+      const obj: any = {};
 
-        const key = groupBy.map(g => row[g]).join('|');
+      groupBy.forEach(field => {
+        obj[field] = row[field];
+      });
 
-        if (!map.has(key)) {
+      fields.forEach(config => {
+        const resultField =
+          `${config.field}_${config.operation}`;
 
-            const obj: any = {};
+        switch (config.operation) {
+          case 'sum':
+          case 'avg':
+          case 'weightedAvg':
+          case 'count':
+            obj[resultField] = 0;
+            break;
 
-            groupBy.forEach(g => obj[g] = row[g]);
+          case 'min':
+            obj[resultField] = Number.POSITIVE_INFINITY;
+            break;
 
-            fields.forEach(f => {
-
-                switch (f.operation) {
-
-                    case 'sum':
-                    case 'avg':
-                        obj[`${f.field}_${f.operation}`] = 0;
-                        break;
-
-                    case 'min':
-                        obj[`${f.field}_min`] = Number.MAX_VALUE;
-                        break;
-
-                    case 'max':
-                        obj[`${f.field}_max`] = Number.MIN_VALUE;
-                        break;
-
-                    case 'count':
-                        obj[`${f.field}_count`] = 0;
-                        break;
-                }
-
-            });
-
-            obj.__count = 0;
-
-            map.set(key, obj);
+          case 'max':
+            obj[resultField] = Number.NEGATIVE_INFINITY;
+            break;
         }
 
-        const current = map.get(key);
+        if (config.operation === 'weightedAvg') {
+          obj[`__${config.field}_weightedSum`] = 0;
+          obj[`__${config.field}_totalWeight`] = 0;
+        }
+      });
 
-        current.__count++;
+      obj.__count = 0;
 
-        fields.forEach(f => {
-
-            const value = Number(row[f.field]) || 0;
-
-            switch (f.operation) {
-
-                case 'sum':
-                    current[`${f.field}_sum`] += value;
-                    break;
-
-                case 'avg':
-                    current[`${f.field}_avg`] += value;
-                    break;
-
-                case 'min':
-                    current[`${f.field}_min`] = Math.min(current[`${f.field}_min`], value);
-                    break;
-
-                case 'max':
-                    current[`${f.field}_max`] = Math.max(current[`${f.field}_max`], value);
-                    break;
-
-                case 'count':
-                    current[`${f.field}_count`]++;
-                    break;
-            }
-
-        });
-
+      map.set(key, obj);
     }
 
-    return Array.from(map.values()).map(item => {
+    const current = map.get(key);
 
-        fields
-            .filter(f => f.operation === 'avg')
-            .forEach(f => {
-                item[`${f.field}_avg`] /= item.__count;
-            });
+    current.__count++;
 
-        delete item.__count;
+    fields.forEach(config => {
+      const value = Number(row[config.field]) || 0;
+      const resultField =
+        `${config.field}_${config.operation}`;
 
-        return item;
+      switch (config.operation) {
+        case 'sum':
+          current[resultField] += value;
+          break;
 
+        case 'avg':
+          current[resultField] += value;
+          break;
+
+        case 'weightedAvg': {
+          if (!config.weightField) {
+            throw new Error(
+              `La operación weightedAvg requiere weightField para "${config.field}".`
+            );
+          }
+
+          const weight =
+            Number(row[config.weightField]) || 0;
+
+          current[`__${config.field}_weightedSum`] +=
+            value * weight;
+
+          current[`__${config.field}_totalWeight`] +=
+            weight;
+
+          break;
+        }
+
+        case 'min':
+          current[resultField] =
+            Math.min(current[resultField], value);
+          break;
+
+        case 'max':
+          current[resultField] =
+            Math.max(current[resultField], value);
+          break;
+
+        case 'count':
+          current[resultField]++;
+          break;
+      }
+    });
+  }
+
+  return Array.from(map.values()).map(item => {
+    fields.forEach(config => {
+      const resultField =
+        `${config.field}_${config.operation}`;
+
+      if (config.operation === 'avg') {
+        item[resultField] =
+          item.__count > 0
+            ? item[resultField] / item.__count
+            : 0;
+      }
+
+      if (config.operation === 'weightedAvg') {
+        const weightedSum =
+          item[`__${config.field}_weightedSum`];
+
+        const totalWeight =
+          item[`__${config.field}_totalWeight`];
+
+        item[resultField] =
+          totalWeight > 0
+            ? weightedSum / totalWeight
+            : 0;
+
+        delete item[`__${config.field}_weightedSum`];
+        delete item[`__${config.field}_totalWeight`];
+      }
     });
 
-}
+    delete item.__count;
+
+    return item;
+  });
+};
 
 
 export function createChartSerie<T>(

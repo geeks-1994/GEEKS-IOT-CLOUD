@@ -75,6 +75,8 @@ import * as XLSX from 'xlsx';
   templateUrl: './reports-viewer.html',
   styleUrl: './reports-viewer.scss',
 })
+
+
 export class ReportsViewer implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('tabulatorTable', { static: false })
@@ -746,7 +748,7 @@ async ResumeData(){
           [{field:'tsQuantity',operation:'sum'},
             {field:'KM',operation:'sum'},
             {field:'HRS',operation:'sum'},
-            {field:'eficiency',operation:'avg'},
+            {field:'eficiency',operation:'weightedAvg',weightField:'tsQuantity'},
             {field:'tstgTagID',operation:'count'}
           ]);
 
@@ -755,14 +757,14 @@ async ResumeData(){
             ...record,
             HRS_sum:parseFloat(Number(record.HRS_sum).toFixed(2)),
             KM_sum:parseFloat(Number(record.KM_sum).toFixed(2)),
-            eficiency_avg:parseFloat(Number(record.eficiency_avg).toFixed(2)),
+            eficiency_weightedAvg:parseFloat(Number(record.eficiency_weightedAvg).toFixed(2)),
             tsQuantity_sum:parseFloat(Number(record.tsQuantity_sum).toFixed(2))
           }))
           console.log(resume);
 
 
           const seriesQuantity = createChartSerie<any>(resumeData,'tsQuantity_sum','Cantidad','column');
-          const seriesEficienci = createChartSerie<any>(resumeData,'eficiency_avg','Eficiencia','line');
+          const seriesEficienci = createChartSerie<any>(resumeData,'eficiency_weightedAvg','Eficiencia','line');
           const dataSeriesChart:ApexAxisChartSeries = [seriesQuantity,seriesEficienci];
           const categories = createChartCategories(resumeData,distinct);
 

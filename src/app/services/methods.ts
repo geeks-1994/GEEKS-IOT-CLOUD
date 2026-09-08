@@ -253,7 +253,7 @@ public reports: ReportCatalogue[] = [
         { title: 'Tipo vehículo', field: 'tsveTypeVehicle', minWidth: 150,headerFilter: 'input' },
          { title: 'HRS', field: 'HRS_sum', sorter: 'number', minWidth: 100 },
         { title: 'Distancia', field: 'KM_sum', sorter: 'number', minWidth: 120 },
-       { title: 'Eficiencia', field: 'eficiency_avg', sorter: 'number', minWidth: 120,  bottomCalc: 'avg',
+       { title: 'Eficiencia', field: 'eficiency_weightedAvg', sorter: 'number', minWidth: 120,  bottomCalc: 'avg',
   bottomCalcFormatter: (cell: any) => {
     const value = Number(cell.getValue() || 0);
     return value.toFixed(2);
