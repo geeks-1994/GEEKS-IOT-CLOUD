@@ -798,6 +798,8 @@ loginsuite(credentials: { email: string; password: string }):Observable<GsuiteLo
 
   GetPostDataCatalogue<T>(sendto:ParametersCatalogue):Observable<T[]>
   {
+
+ //   console.log('Sending data to catalogue:', sendto);
      const uri = `${this.baseURL}/gsuite/catalogueData`;
 
 

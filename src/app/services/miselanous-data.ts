@@ -19,12 +19,17 @@ constructor(public services: Methods) { }
 
 
 async loadDataMiselaous(): Promise<void> {
+  
   try {
+    
     const baseParameters = {
       user: this.services.SessionData().userSalesforce,
       password: this.services.SessionData().passwordSalesForce,
-      company: this.services.SessionData().company
+      company: this.services.SessionData().company,
+      Migration: this.services.SessionData().Migration ?? false
     };
+
+    console.log('Base Parameters:', baseParameters);
 
     const [
       responseTanks,
@@ -68,35 +73,37 @@ async loadDataMiselaous(): Promise<void> {
     ]);
 
     const tanksData: Miselanuos[] = responseTanks.map((tank) => ({
-      label: tank.description,
-      value: tank.TankId,
-      SFValue:tank.id
+      label: tank?.description,
+      value: tank?.TankId,
+      SFValue:tank?.id
     }));
 
     const vehiclesData: Miselanuos[] = responseVehicles.map((vehicle) => ({
-      label: vehicle.VehicleName,
-      value: vehicle.VehicleName,
-      SFValue:vehicle.Id
+      label: vehicle?.VehicleName,
+      value: vehicle?.VehicleName,
+      SFValue:vehicle?.Id
     }));
 
     
     const vehicleBrandsData: Miselanuos[] = responseTypeVehicles.map((vehicleBrand) => ({
-      label: vehicleBrand.Name,
-      value: vehicleBrand.Name,
-      SFValue:vehicleBrand.id
+      label: vehicleBrand?.Name,
+      value: vehicleBrand?.Name,
+      SFValue:vehicleBrand?.id
     }));
 
 
     const vehiclesGroup:Miselanuos[] = responsiveGroup.map((group) => ({
-      label:group.Name,
-      value:group.Name,
-      SFValue:group.Id
+      label:group?.Name,
+      value:group?.Name,
+      SFValue:group?.Id
     }));
 
+
+
     const Productdata:Miselanuos[] = responsiveproduct.map((product) =>({
-          label:product.Name,
-          value:product.Name,
-          SFValue:product.id
+          label:product?.Name,
+          value:product?.Name,
+          SFValue:product?.id
     }));
 
     
@@ -107,11 +114,11 @@ async loadDataMiselaous(): Promise<void> {
     this.MiselanousDataProduct.set(Productdata);
   // console.log(this.MiselanousDataProduct())
 
-/*  
+ 
     console.log('Tanques:', this.miselanousDataTank());
     console.log('Vehículos:', this.miselanousDataVehicle());
     console.log('Tipos de vehículos:', this.miselanousDataVehicleBrand());
-*/
+
 
   } catch (error) {
     console.error('Error al cargar los datos misceláneos:', error);

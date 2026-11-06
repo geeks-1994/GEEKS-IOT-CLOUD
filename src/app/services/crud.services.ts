@@ -60,6 +60,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -99,6 +100,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -130,6 +132,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -158,6 +161,7 @@ public CRUDmethods:any = {
         {name:'volume',value:data.calibrationVolume},
         {name:'Active',value:data.active},
         {name:'Active_Sensor',value:data.sensorActive},
+        {name:'Descrition',value:data.description ?? ''},
         {name:'umbral_1',value:data.umbral_1},
         {name:'umbral_2',value:data.umbral_2},
         {name:'umbral_3',value:data.umbral_3},
@@ -176,6 +180,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
       
@@ -198,6 +203,7 @@ public CRUDmethods:any = {
         {name:'tankId',value:data.TankId},
         {name:'capacity',value:data.capacity},
         {name:'volume',value:data.calibrationVolume},
+        {name:'Description',value:data.description ?? ''},
         {name:'Active',value:data.active},
         {name:'Active_Sensor',value:data.sensorActive},
         {name:'umbral_1',value:data.umbral_1},
@@ -209,7 +215,7 @@ public CRUDmethods:any = {
         {name:'email_4',value:data.email_4}
 
       ]
-
+    console.log(parameters);
 
             const dataCreate:crudService =  {
         nameObject:'tanks',
@@ -217,6 +223,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
       
@@ -245,6 +252,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -278,6 +286,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -311,6 +320,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -340,6 +350,108 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
+        parametersData:parameters
+      };
+
+
+      const response = await firstValueFrom(this.services.CrudMethods(dataCreate));
+      
+      console.log(response);
+      
+    } catch (error) {
+
+      console.error(error);
+      this.tools.error('Error de catalogo','verifique los datos de entrada');
+    }
+  },
+
+
+  //group_vehicles
+   groupcreate: async (data:any) => {
+
+        try {
+
+      let parameters:ParameterOptions[] = [
+        {name:'Name',value:data.Name},
+        {name:'Active',value:true},
+        {name:'recordtype',value:'0128V000002Ad8TQAS'}
+
+      ] 
+
+      const dataCreate:crudService =  {
+        nameObject:'group',
+        TypeMethod:'create',
+        user:this.services.SessionData().userSalesforce,
+        password:this.services.SessionData().passwordSalesForce,
+        company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
+        parametersData:parameters
+      };
+
+
+      const response = await firstValueFrom(this.services.CrudMethods(dataCreate));
+      
+      console.log(response);
+      
+    } catch (error) {
+
+      console.error(error);
+      this.tools.error('Error de catalogo','verifique los datos de entrada');
+    }
+
+  },
+  groupupdate: async (data:any) =>{
+
+      try {
+
+      let parameters:ParameterOptions[] = [
+        {name:'Id',value:data.Id},
+        {name:'Name',value:data.Name},
+        {name:'Active',value:data.active},
+        {name:'recordtype',value:'0128V000002Ad8TQAS'}
+
+      ] 
+
+      console.log(parameters);
+
+      const dataCreate:crudService =  {
+        nameObject:'group',
+        TypeMethod:'update',
+        user:this.services.SessionData().userSalesforce,
+        password:this.services.SessionData().passwordSalesForce,
+        company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
+        parametersData:parameters
+      };
+
+
+      const response = await firstValueFrom(this.services.CrudMethods(dataCreate));
+      
+      console.log(response);
+      
+    } catch (error) {
+
+      console.error(error);
+      this.tools.error('Error de catalogo','verifique los datos de entrada');
+    }
+    
+  },
+  groupdelete: async (data:any) => {
+    try {
+
+      let parameters:ParameterOptions[] = [
+        {name:'Id',value:data.id}
+
+      ] 
+
+      const dataCreate:crudService =  {
+        nameObject:'group',
+        TypeMethod:'delete',
+        user:this.services.SessionData().userSalesforce,
+        password:this.services.SessionData().passwordSalesForce,
+        company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -376,6 +488,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -411,6 +524,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -439,6 +553,7 @@ public CRUDmethods:any = {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -489,6 +604,7 @@ Vehiclescreate: async (data:any) =>{
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -550,6 +666,7 @@ Vehiclesupdate:async (data:any) => {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -586,6 +703,7 @@ Vehiclesdelete: async (data:any) => {
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -609,7 +727,7 @@ Tagscreate: async (data:any ) =>{
   try {
   
 
-              console.log(data);
+      console.log(data);
       let parameters:ParameterOptions[] = [
         {name:'Name',value:data.TagCode},
         {name:'OdometerPrompt',value:data.OdometerPrompt},
@@ -628,6 +746,7 @@ Tagscreate: async (data:any ) =>{
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -673,6 +792,7 @@ Tagsupdate: async (data:any) =>{
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -714,6 +834,7 @@ Tagsdelete: async (data:any) =>{
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -756,6 +877,7 @@ drivercreate: async (data:any) =>{
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -792,6 +914,7 @@ driverupdate: async (data:any) =>{
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -826,6 +949,7 @@ driverdelete: async (data:any) =>{
         user:this.services.SessionData().userSalesforce,
         password:this.services.SessionData().passwordSalesForce,
         company:this.services.SessionData().company,
+        Migration:this.services.SessionData().Migration,
         parametersData:parameters
       };
 
@@ -841,6 +965,8 @@ driverdelete: async (data:any) =>{
       this.tools.error('Error de catalogo','verifique los datos de entrada');
     }
 }
+
+
 
 
 };

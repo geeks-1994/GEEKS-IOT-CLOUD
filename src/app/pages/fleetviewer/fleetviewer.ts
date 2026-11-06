@@ -49,7 +49,7 @@ this.route.paramMap
         filter((name): name is CatalogueName => !!name && !!this.catalogueConfig[name]),
         distinctUntilChanged()
       )
-      .subscribe((nameCatalogue: CatalogueName) => {
+       .subscribe((nameCatalogue: CatalogueName) => {
         this.catalogueData.set([]);
         this.catalogueColumns.set([]);
         this.catalogueCaptions.set([]);
@@ -320,7 +320,8 @@ catalogueName = signal<CatalogueName>('Fleets');
         nameObject: nameCatalog,
         user: this.services.SessionData().userSalesforce,
         password: this.services.SessionData().passwordSalesForce,
-        company: this.services.SessionData().company
+        company: this.services.SessionData().company,
+        Migration: this.services.SessionData().Migration
       };
 
       this.tools.loading();

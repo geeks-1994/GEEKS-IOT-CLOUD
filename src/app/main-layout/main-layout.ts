@@ -130,14 +130,15 @@ checkSession(): void {
       const dataSession: SessionData = {
         userSalesforce: user.user.userSalesForce,
         passwordSalesForce: user.user.passwordSalesForce,
-        company: user.user.company
+        company: user.user.company,
+        Migration: user.user.Migrating || false,
       };
 
       this.services.setSession(dataSession);
        this.services.CataloguePermices.set(user.user.RolesCatalogues ?? []);
        this.services.FleetPermices.set(user.user.RolesFleet ?? []);
 
-    //  console.log('Sesión cargada:', this.services.SessionData());
+      console.log('Sesión cargada:', this.services.SessionData());
     },
 
     error: (err) => {

@@ -26,6 +26,7 @@ export interface GsuiteUser {
   email: string;
   role: string;
   company: string;
+  Migrating?:boolean;
   userSalesForce: string;
   passwordSalesForce: string;
   Catalogues:HelperMenu[];
@@ -59,6 +60,7 @@ export interface ParametersCatalogue{
   user:string;
   password:string;
   company:string;
+  Migration?:boolean;
 }
 
 
@@ -142,6 +144,7 @@ export interface SessionData{
         userSalesforce:string;
       passwordSalesForce:string;
       company:string;
+      Migration?:boolean; 
 };
 
 

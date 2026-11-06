@@ -82,7 +82,8 @@ export interface crudService {
 TypeMethod:CrudMethod;
 user:string;
 password:string;
-company:string
+company:string;
+Migration?:boolean;
 parametersData:ParameterOptions[]
 
 }

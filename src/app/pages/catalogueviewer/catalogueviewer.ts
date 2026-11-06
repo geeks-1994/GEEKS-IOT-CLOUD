@@ -162,7 +162,7 @@ effect( () =>{
       ]
     },
     group:{
-      title:'Grupo de ehiculos',
+      title:'Grupo de Vehiculos',
       columns:[
         'Name',
         'active',
@@ -272,7 +272,8 @@ catalogueName = signal<CatalogueName>('pumps');
         nameObject: nameCatalog,
         user: this.services.SessionData().userSalesforce,
         password: this.services.SessionData().passwordSalesForce,
-        company: this.services.SessionData().company
+        company: this.services.SessionData().company,
+        Migration: this.services.SessionData().Migration
       };
 
       this.tools.loading();
@@ -438,6 +439,8 @@ async saveCatalogueRecord(
    
     const stringInput:any = this.catalogueName() + 'create';
 
+    console.log('Metodo a ejecutar:', stringInput);
+    
      if(this.CRUD.CRUDmethods[stringInput]){
       
        await this.CRUD.CRUDmethods[stringInput](data);
